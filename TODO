@@ -1,0 +1,7 @@
+- Fix env vars
+- Sanitize commands
+- BG job (possibly DelayedJob which means setting up the DB :()
+- Specs
+- Tempdir for cloning
+- CF Auth
+- Implement cf:on_first_instance task (see https://docs.cloudfoundry.org/buildpacks/ruby/ruby-tips.html)

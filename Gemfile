@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem 'dotenv-rails'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.0.0'
@@ -19,6 +20,7 @@ gem 'puma', '~> 3.0'
 # gem 'rack-cors'
 
 gem 'github_webhook', '~> 0.5.0'
+gem 'open4'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

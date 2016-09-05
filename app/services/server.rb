@@ -22,6 +22,8 @@ class Server
       Execute.go("cf start #{app_name}")
       Rails.logger.info("Done")
     end
+  ensure
+    FileUtils.remove_entry_secure(local_dir)
   end
 
   def destroy!
@@ -30,7 +32,7 @@ class Server
       Execute.go("cf delete -f #{app_name}")
       Execute.go("cf delete-service -f #{db_service_name}")
     end
-    FileUtils.rm_rf(local_dir)
+    FileUtils.remove_entry_secure(local_dir)
   end
 
   def local_dir
@@ -70,6 +72,6 @@ class Server
 
   def set_env(env, value = ENV[env])
     # TODO: These data could later be stored in a DB to be more generic
-    Execute.go("cf set-env #{app_name} #{env} #{value}"
+    Execute.go("cf set-env #{app_name} #{env} #{value}")
   end
 end

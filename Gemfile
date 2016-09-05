@@ -21,6 +21,9 @@ gem 'puma', '~> 3.0'
 
 gem 'github_webhook', '~> 0.5.0'
 gem 'open4'
+gem 'sidekiq'
+gem 'sinatra', '~> 2.0.0.beta2', require: false
+gem 'redis-namespace'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

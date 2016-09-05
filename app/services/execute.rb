@@ -1,4 +1,20 @@
 class Execute
+  class ExecutionException < RuntimeError
+    def initialize(command, exitstatus, stderr_out)
+      @command    = command
+      @exitstatus = exitstatus
+      @stderr_out = stderr_out
+    end
+
+    def message
+      <<-MSG
+The command #{@command} failed to run with exit code #{@exitstatus}"
+STDERR output:
+#{@stderr_out}
+      MSG
+    end
+  end
+
   def self.go(command)
     new(command).tap do |process|
       process.perform
@@ -15,10 +31,8 @@ class Execute
   def perform
     pid, stdin, @stdout, @stderr = Open4::popen4(@command)
     ignored, status = Process::waitpid2 pid
-    if status.exitstatus.to_i == 0
-      error = stderr.read
-      log(error)
-      raise "Failed with exit status #{status.exitstatus.to_i}"
+    unless status.exitstatus.to_i == 0
+      raise ExecutionException.new(@command, status.exitstatus, stderr.read)
     end
   end
 

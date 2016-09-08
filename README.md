@@ -44,7 +44,7 @@ At this stage QA fire doesn't update and redeploy if additional commits are made
 
 ## Webhooks
 
-QA Fire uses the [github_webook](https://github.com/ssaunier/github_webhook) gem to listen to incoming webhooks from Github.
+QA Fire uses the [github_webhook](https://github.com/ssaunier/github_webhook) gem to listen to incoming webhooks from Github.
 
 ### Setting up a webhook
 
@@ -82,6 +82,7 @@ Deployment vs Release
 * doesn't handle updates to the PR yet
 * would be nice if it updated the PR with a comment containing the URL
 * would be great to do a LGTM style check for QAPASS or something
-* doesn't handle auth to CF yet!
+* doesn't handle auth to CF yet! (https://github.com/cloudfoundry/omniauth-uaa-oauth2 ?)
 * env vars must be set on QA fire (we can't copy vars from apps or read from a DB at this point)
-
+* uses a seperate manifest-qa.yml rather than environments 
+* doesn't test integration like 'curl -X POST -H "Content-Type: application/json" -H "X-Hub-Signature: sha1=fbdb1d1b18aa6c08324b7d64b71fb76370690e1d" -H "X-GitHub-Event: pull_request" -D @pr.json localhost:3000/github_webhooks'

@@ -18,3 +18,5 @@
 
 # Don't commit the local env
 .env
+
+.idea

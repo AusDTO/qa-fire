@@ -23,7 +23,7 @@ class Server
       puts "Launching to #{target_url}"
 
       CloudFoundry.login
-      CloudFoundry.push(app_name, app_zip)
+      CloudFoundry.push(app_name,local_dir+"manifest.yml", app_zip)
       CloudFoundry.start(app_name)
 
       #Execute.go("cf create-service dto-shared-pgsql shared-psql #{db_service_name}")

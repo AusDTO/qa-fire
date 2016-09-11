@@ -25,6 +25,7 @@ gem 'sidekiq'
 gem 'sinatra', '~> 2.0.0.beta2', require: false
 gem 'redis-namespace'
 gem 'rest-client'
+gem 'rubyzip'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

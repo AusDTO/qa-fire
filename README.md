@@ -85,4 +85,4 @@ Deployment vs Release
 * doesn't handle auth to CF yet! (https://github.com/cloudfoundry/omniauth-uaa-oauth2 ?)
 * env vars must be set on QA fire (we can't copy vars from apps or read from a DB at this point)
 * uses a seperate manifest-qa.yml rather than environments 
-* doesn't test integration like 'curl -X POST -H "Content-Type: application/json" -H "X-Hub-Signature: sha1=fbdb1d1b18aa6c08324b7d64b71fb76370690e1d" -H "X-GitHub-Event: pull_request" -D @pr.json localhost:3000/github_webhooks'
+* doesn't test integration like 'curl -X POST -H "Content-Type: application/json" -H "X-Hub-Signature: sha1=ac7f4aff2c3f21f027a812486fdf085eff4a415e" -H "X-GitHub-Event: pull_request" --data  @spec/resources/pr.json localhost:3000/github_webhooks'

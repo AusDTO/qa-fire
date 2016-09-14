@@ -22,6 +22,7 @@ class ZipFileGenerator
   # Zip the input directory.
   def write
     # exclude .git folder
+    # TODO follow .cfignore file
     entries = Dir.entries(@input_dir) - %w(. .. .git)
 
     ::Zip::File.open(@output_file, ::Zip::File::CREATE) do |io|

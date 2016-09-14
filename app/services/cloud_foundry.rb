@@ -23,10 +23,10 @@ class CloudFoundry
     oauth_token = JSON.parse(authorization.body)["access_token"]
     @headers = {:Authorization => "bearer #{oauth_token}"}
     @cf_space_guid = find_space(cf_space)['resources'][0]['metadata']['guid']
+    Rails.logger.info("logged in to cf in space #{cf_space} (#{@cf_space_guid})")
   end
 
   def self.find_space(space_name)
-
     result = RestClient.get("#{@cf_api}/v2/spaces?q=name:#{space_name}", @headers)
     JSON.parse(result.body)
   end
@@ -38,18 +38,27 @@ class CloudFoundry
   end
 
   def self.push(app_name, app_manifest, app_zip)
+    #RestClient.proxy = "http://localhost:8888"
 
     # create app if does not exist
     existing_apps = find_app(app_name)
     if existing_apps["resources"].empty?
       #TODO load values from manifest.yml including memory, buildpack and environment_json envvars
-      app = {name: app_name, space_guid: @cf_space_guid, buildpack: 'staticfile_buildpack'}
-
+      app = {name: app_name, space_guid: @cf_space_guid}
+      if app_manifest["applications"][0]
+        app.merge!(app_manifest["applications"][0])
+        if app["memory"]
+          app["memory"] = app["memory"].to_i
+        end
+        app["name"] = app_name
+      end
       result = RestClient.post("#{@cf_api}/v2/apps",
                                app.to_json, @headers)
       new_app = JSON.parse(result.body)
       cf_app_guid = new_app["metadata"]["guid"]
+      puts "created new app #{cf_app_guid}"
     else
+      puts "found existing app #{cf_app_guid}"
       cf_app_guid = existing_apps['resources'][0]['metadata']['guid']
       #TODO update an app with envvars etc. http://apidocs.cloudfoundry.org/241/apps/updating_an_app.html
     end
@@ -74,7 +83,6 @@ class CloudFoundry
 
     # associate route with app http://apidocs.cloudfoundry.org/241/apps/associate_route_with_the_app.html
     result = RestClient.put("#{@cf_api}/v2/apps/#{cf_app_guid}/routes/#{cf_route_guid}", {}, @headers)
-    puts result
 
     # TODO check if files are already on cf push cache via PUT /v2/resource_match => [{"sha1":"0e0e99e7b065e1adea90072d300ba22cc5b17130","size":34}
     # https://apidocs.cloudfoundry.org/241/apps/uploads_the_bits_for_an_app.html
@@ -83,20 +91,33 @@ class CloudFoundry
     push_job = JSON.parse(result.body)
 
     while push_job["entity"]["status"] == "queued"
-      puts "waiting for push to complete"
+      Rails.logger.info("waiting for push to complete")
       sleep(1)
       result = RestClient.get("#{@cf_api}/v2/jobs/"+push_job["entity"]["guid"], @headers)
-      puts result
       push_job = JSON.parse(result.body)
     end
-    puts "push complete for #{app_name}"
+    Rails.logger.info("push complete for #{app_name}")
   end
 
   def self.start(app_name)
     #start app
     cf_app_guid =find_app(app_name)['resources'][0]['metadata']['guid']
     result = RestClient.put("#{@cf_api}/v2/apps/#{cf_app_guid}?async=true", {state: "STARTED"}.to_json, @headers)
-    puts result
+    Rails.logger.info(result)
+  end
+
+  def self.stop(app_name)
+    #stop app
+    cf_app_guid =find_app(app_name)['resources'][0]['metadata']['guid']
+    result = RestClient.put("#{@cf_api}/v2/apps/#{cf_app_guid}?async=true", {state: "STOPPED"}.to_json, @headers)
+    Rails.logger.info(result)
+  end
+
+  def self.delete(app_name)
+    #delete app
+    cf_app_guid =find_app(app_name)['resources'][0]['metadata']['guid']
+    result = RestClient.delete("#{@cf_api}/v2/apps/#{cf_app_guid}?async=true", {}, @headers)
+    Rails.logger.info(result)
   end
 
 rescue RestClient::ExceptionWithResponse => err

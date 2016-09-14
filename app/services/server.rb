@@ -9,21 +9,23 @@ class Server
 
   def launch!
     begin
-      #TODO handle auth!
       puts "cloning git and creating application archive"
       app_zip = "#{local_dir}/application.zip"
+      app_manifest = {}
       # FIXME: Definite santization problems here!
-      # TODO: Use tmpdir
-      Execute.go("git clone https://github.com/#{@repo_name}.git #{local_dir}")
+      Execute.go("git clone https://github.com/#{@repo_name}.git #{local_dir} --depth 1")
       FileUtils.cd(local_dir) do
         Execute.go("git checkout #{@branch}")
         zf = ZipFileGenerator.new(local_dir, app_zip)
         zf.write()
+        if File.exist?("manifest.yml")
+          app_manifest = YAML.load_file("manifest.yml")
+        end
       end
-      puts "Launching to #{target_url}"
+      puts "Launching #{@repo_name} #{@branch} (# #{@pr_number})"
 
       CloudFoundry.login
-      CloudFoundry.push(app_name,local_dir+"manifest.yml", app_zip)
+      CloudFoundry.push(app_name, app_manifest, app_zip)
       CloudFoundry.start(app_name)
 
       #Execute.go("cf create-service dto-shared-pgsql shared-psql #{db_service_name}")
@@ -37,16 +39,14 @@ class Server
   end
 
   def destroy!
-    FileUtils.cd(local_dir) do
-      Execute.go("cf stop #{app_name}")
-      Execute.go("cf delete -f #{app_name}")
-      Execute.go("cf delete-service -f #{db_service_name}")
-    end
-    FileUtils.remove_entry_secure(local_dir)
+      CloudFoundry.login
+      CloudFoundry.start(app_name)
+      CloudFoundry.delete(app_name)
+      #Execute.go("cf delete-service -f #{db_service_name}")
   end
 
   def local_dir
-    "#{Rails.root}/tmp/#{app_name}"
+    "#{Dir.tmpdir}/tmp/#{app_name}"
   end
 
   def app_name
@@ -55,14 +55,6 @@ class Server
 
   def db_service_name
     "#{app_name}-db"
-  end
-
-  def base_url
-    "apps.staging.digital.gov.au"
-  end
-
-  def target_url
-    "#{app_name}.#{base_url}"
   end
 
   def set_envs

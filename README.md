@@ -77,6 +77,22 @@ TODO:
 Feature switches
 Deployment vs Release
 
+## Development
+If developing on OSX, can setup and run background queues and start workers using:
+```
+brew install redis
+brew services start redis
+bundle exec sidekiq
+```
+
+Can test an example webhook using:
+```
+curl -X POST -H "Content-Type: application/json" \
+-H "X-Hub-Signature: sha1=ac7f4aff2c3f21f027a812486fdf085eff4a415e" \
+-H "X-GitHub-Event: pull_request" \
+--data  @spec/resources/pr.json localhost:3000/github_webhooks'
+```
+
 ## Limitations
 
 * doesn't handle updates to the PR yet
@@ -85,4 +101,3 @@ Deployment vs Release
 * doesn't handle auth to CF yet! (https://github.com/cloudfoundry/omniauth-uaa-oauth2 ?)
 * env vars must be set on QA fire (we can't copy vars from apps or read from a DB at this point)
 * uses a seperate manifest-qa.yml rather than environments 
-* doesn't test integration like 'curl -X POST -H "Content-Type: application/json" -H "X-Hub-Signature: sha1=ac7f4aff2c3f21f027a812486fdf085eff4a415e" -H "X-GitHub-Event: pull_request" --data  @spec/resources/pr.json localhost:3000/github_webhooks'

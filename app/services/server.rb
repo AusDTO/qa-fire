@@ -8,22 +8,32 @@ class Server
   end
 
   def launch!
-    #TODO handle auth!
-    puts "Launching to #{target_url}"
-    # FIXME: Definite santization problems here!
-    # TODO: Use tmpdir
-    Execute.go("git clone https://github.com/#{@repo_name}.git #{local_dir}")
-    FileUtils.cd(local_dir) do
-      Execute.go("git checkout #{@branch}")
-      Execute.go("cf push #{app_name} -f manifest-qa.yml --no-start")
-      Execute.go("cf create-service dto-shared-pgsql shared-psql #{db_service_name}")
-      Execute.go("cf bind-service #{app_name} #{db_service_name}")
-      set_envs
-      Execute.go("cf start #{app_name}")
+    begin
+      #TODO handle auth!
+      puts "cloning git and creating application archive"
+      app_zip = "#{local_dir}/application.zip"
+      # FIXME: Definite santization problems here!
+      # TODO: Use tmpdir
+      Execute.go("git clone https://github.com/#{@repo_name}.git #{local_dir}")
+      FileUtils.cd(local_dir) do
+        Execute.go("git checkout #{@branch}")
+        zf = ZipFileGenerator.new(local_dir, app_zip)
+        zf.write()
+      end
+      puts "Launching to #{target_url}"
+
+      CloudFoundry.login
+      CloudFoundry.push(app_name,local_dir+"manifest.yml", app_zip)
+      CloudFoundry.start(app_name)
+
+      #Execute.go("cf create-service dto-shared-pgsql shared-psql #{db_service_name}")
+      #Execute.go("cf bind-service #{app_name} #{db_service_name}")
+      #set_envs
+
       Rails.logger.info("Done")
+    ensure
+      FileUtils.remove_entry_secure(local_dir)
     end
-  ensure
-    FileUtils.remove_entry_secure(local_dir)
   end
 
   def destroy!

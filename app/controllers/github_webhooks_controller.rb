@@ -5,7 +5,7 @@ class GithubWebhooksController < ApplicationController
     pr = payload[:pull_request]
 
     # HACKHACKHACK run right now.
-    Server.new(pr).launch!
+    #Server.new(pr).launch!
 
     ServerLaunchJob.perform_later(pr) if %w(opened reopened).include?(payload[:action])
     ServerDestroyJob.perform_later(pr) if payload[:action] == 'closed'

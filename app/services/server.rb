@@ -13,9 +13,8 @@ class Server
       app_zip = "#{local_dir}/application.zip"
       app_manifest = {}
       # FIXME: Definite santization problems here!
-      Execute.go("git clone https://github.com/#{@repo_name}.git #{local_dir} --depth 1")
+      Execute.go("git clone https://github.com/#{@repo_name}.git #{local_dir} --branch #{@branch} --depth 1 --single-branch")
       FileUtils.cd(local_dir) do
-        Execute.go("git checkout #{@branch}")
         zf = ZipFileGenerator.new(local_dir, app_zip)
         zf.write()
         if File.exist?("manifest.yml")

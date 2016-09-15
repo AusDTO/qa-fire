@@ -24,15 +24,16 @@ class Server
       end
       puts "Launching #{@repo_name} #{@branch} (# #{@pr_number})"
 
-      CloudFoundry.login
-      CloudFoundry.push(app_name, app_manifest, app_zip)
-      CloudFoundry.start(app_name)
+      if CloudFoundry.login
+        CloudFoundry.push(app_name, app_manifest, app_zip)
+        CloudFoundry.start(app_name)
 
-      #Execute.go("cf create-service dto-shared-pgsql shared-psql #{db_service_name}")
-      #Execute.go("cf bind-service #{app_name} #{db_service_name}")
-      #set_envs
+        #Execute.go("cf create-service dto-shared-pgsql shared-psql #{db_service_name}")
+        #Execute.go("cf bind-service #{app_name} #{db_service_name}")
+        #set_envs
 
-      Rails.logger.info("Done")
+        Rails.logger.info("Done")
+      end
     ensure
       FileUtils.remove_entry_secure(local_dir)
     end

@@ -8,7 +8,13 @@ class CloudFoundry
 
     # RestClient.proxy = "http://localhost:8888"
     #use /v2/info to find "authorization_endpoint":"https://login.local.pcfdev.io"
-    info = RestClient.get("#{@cf_api}/v2/info")
+    begin
+      info = RestClient.get("#{@cf_api}/v2/info")
+    rescue RestClient::SSLCertificateNotVerified => e
+      puts "ERROR SSL Certificate verify failed for #{@cf_api}/v2/info - if you are testing on pcfdev, ensure API URL is HTTP only"
+      return false
+    end
+
     authorization_endpoint = JSON.parse(info.body)["authorization_endpoint"]
     # ask for an oauth access/refresh token
     authorization = RestClient::Request.execute(:method => "post",
@@ -23,7 +29,8 @@ class CloudFoundry
     oauth_token = JSON.parse(authorization.body)["access_token"]
     @headers = {:Authorization => "bearer #{oauth_token}"}
     @cf_space_guid = find_space(cf_space)['resources'][0]['metadata']['guid']
-    Rails.logger.info("logged in to cf in space #{cf_space} (#{@cf_space_guid})")
+    puts("logged in to cf in space #{cf_space} (#{@cf_space_guid})")
+    true
   end
 
   def self.find_space(space_name)
@@ -77,8 +84,10 @@ class CloudFoundry
                                {host: app_name, domain_guid: cf_domain_guid, space_guid: @cf_space_guid}.to_json, @headers)
       new_route = JSON.parse(result.body)
       cf_route_guid = new_route["metadata"]["guid"]
+      puts "created new route #{cf_route_guid}"
     else
       cf_route_guid = existing_routes['resources'][0]['metadata']['guid']
+      puts "found existing route #{cf_route_guid}"
     end
 
     # associate route with app http://apidocs.cloudfoundry.org/241/apps/associate_route_with_the_app.html
@@ -91,33 +100,33 @@ class CloudFoundry
     push_job = JSON.parse(result.body)
 
     while push_job["entity"]["status"] == "queued"
-      Rails.logger.info("waiting for push to complete")
+      puts("waiting for push to complete")
       sleep(1)
       result = RestClient.get("#{@cf_api}/v2/jobs/"+push_job["entity"]["guid"], @headers)
       push_job = JSON.parse(result.body)
     end
-    Rails.logger.info("push complete for #{app_name}")
+    puts("push complete for #{app_name}")
   end
 
   def self.start(app_name)
     #start app
     cf_app_guid =find_app(app_name)['resources'][0]['metadata']['guid']
     result = RestClient.put("#{@cf_api}/v2/apps/#{cf_app_guid}?async=true", {state: "STARTED"}.to_json, @headers)
-    Rails.logger.info(result)
+    puts(result)
   end
 
   def self.stop(app_name)
     #stop app
     cf_app_guid =find_app(app_name)['resources'][0]['metadata']['guid']
     result = RestClient.put("#{@cf_api}/v2/apps/#{cf_app_guid}?async=true", {state: "STOPPED"}.to_json, @headers)
-    Rails.logger.info(result)
+    puts(result)
   end
 
   def self.delete(app_name)
     #delete app
     cf_app_guid =find_app(app_name)['resources'][0]['metadata']['guid']
     result = RestClient.delete("#{@cf_api}/v2/apps/#{cf_app_guid}?async=true", {}, @headers)
-    Rails.logger.info(result)
+    puts(result)
   end
 
 rescue RestClient::ExceptionWithResponse => err

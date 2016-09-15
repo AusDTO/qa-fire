@@ -85,12 +85,22 @@ brew services start redis
 bundle exec sidekiq
 ```
 
+Can setup a local cloudfoundry using https://github.com/pivotal-cf/pcfdev , the .env for local cloudfoundry:
+```
+CF_API=http://api.local.pcfdev.io
+CF_ORG=pcfdev-org
+CF_SPACE=pcfdev-space
+CF_USERNAME=admin
+CF_PASSWORD=admin
+GITHUB_WEBHOOK_SECRET=
+```
+
 Can test an example webhook using:
 ```
 curl -X POST -H "Content-Type: application/json" \
 -H "X-Hub-Signature: sha1=ac7f4aff2c3f21f027a812486fdf085eff4a415e" \
 -H "X-GitHub-Event: pull_request" \
---data  @spec/resources/pr.json localhost:3000/github_webhooks'
+--data  @spec/resources/pr.json localhost:3000/github_webhooks
 ```
 
 ## Limitations

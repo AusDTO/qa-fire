@@ -26,11 +26,17 @@ class Server
 
       if CloudFoundry.login
         CloudFoundry.push(app_name, app_manifest, app_zip)
-        CloudFoundry.start(app_name)
 
-        #Execute.go("cf create-service dto-shared-pgsql shared-psql #{db_service_name}")
-        #Execute.go("cf bind-service #{app_name} #{db_service_name}")
+        if app_manifest["qafire_services"] && app_manifest["qafire_services"][0]
+          CloudFoundry.create_service(db_service_name,
+                                      app_manifest["qafire_services"][0]["type"],
+                                      app_manifest["qafire_services"][0]["plan"],
+                                      app_name)
+        end
+
         #set_envs
+
+        CloudFoundry.start_app(app_name)
 
         Rails.logger.info("Done")
       end
@@ -41,8 +47,8 @@ class Server
 
   def destroy!
       CloudFoundry.login
-      CloudFoundry.start(app_name)
-      CloudFoundry.delete(app_name)
+      CloudFoundry.delete_app(app_name)
+      CloudFoundry.delete_service(db_service_name)
       #Execute.go("cf delete-service -f #{db_service_name}")
   end
 

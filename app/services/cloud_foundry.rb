@@ -19,17 +19,20 @@ class CloudFoundry
     # ask for an oauth access/refresh token
     authorization = RestClient::Request.execute(:method => "post",
                                                 :url => "#{authorization_endpoint}/oauth/token",
-                                                :headers => {:Authorization => "Basic Y2Y6", # Basic Auth is username "cf" with no password like the cf-cli tool
-                                                             params: {grant_type: "password", password: cf_password, scope: "", username: cf_user}
+                                                :headers => {:Authorization => "Basic Y2Y6",
+                                                             # Basic Auth is username "cf" with no password
+                                                             # like the cf-cli tool
+                                                             params: {grant_type: "password", password: cf_password,
+                                                                      scope: "", username: cf_user}
                                                 },
-                                                :verify_ssl => OpenSSL::SSL::VERIFY_NONE
+                                                :verify_ssl => (authorization_endpoint == 'https://login.local.pcfdev.io' ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER)
     )
 
     # TODO maintain refresh token using https://github.com/rest-client/rest-client#hook
     oauth_token = JSON.parse(authorization.body)["access_token"]
     @headers = {:Authorization => "bearer #{oauth_token}"}
-    @cf_space_guid = find_space(cf_space)['resources'][0]['metadata']['guid']
-    puts("logged in to cf in space #{cf_space} (#{@cf_space_guid})")
+    @space_guid = find_space(cf_space)['resources'][0]['metadata']['guid']
+    puts("logged in to cf in space #{cf_space} (#{@space_guid})")
     true
   end
 
@@ -38,10 +41,66 @@ class CloudFoundry
     JSON.parse(result.body)
   end
 
-  def self.find_app(app_name)
+  def self.find_service(service_name)
+    result = RestClient.get("#{@cf_api}/v2/service_instances?q=name:#{service_name}", @headers)
+    JSON.parse(result.body)
+  end
 
+  def self.find_service_type(service_type_name)
+    result = RestClient.get("#{@cf_api}/v2/services?q=label:#{service_type_name}", @headers)
+    JSON.parse(result.body)
+  end
+
+  def self.find_service_plans(service_type_guid)
+    result = RestClient.get("#{@cf_api}/v2/service_plans?q=service_guid:#{service_type_guid}", @headers)
+    JSON.parse(result.body)
+  end
+
+
+  def self.create_service(service_name, service_type, service_plan, app_name)
+
+    # create app if does not exist
+    existing_services = find_service(service_name)
+    if existing_services["resources"].empty?
+      service_type = find_service_type(service_type)
+      service_type_guid = service_type['resources'][0]['metadata']['guid']
+
+      service_plans = find_service_plans(service_type_guid)
+      #TODO find a particular service plan
+      service_plan_guid = service_plans['resources'][0]['metadata']['guid']
+
+      #TODO accepts_incomplete	Set to `true` if the client allows asynchronous provisioning. The cloud controller may respond before the service is ready for use.
+      result = RestClient.post("#{@cf_api}/v2/service_instances",
+                               {name: service_name, service_plan_guid: service_plan_guid, space_guid: @space_guid}.to_json, @headers)
+      service = JSON.parse(result.body)
+      service_guid = service['metadata']['guid']
+      puts "created new service #{service_guid}"
+    else
+      puts "found existing service #{service_guid}"
+      service_guid = existing_services['resources'][0]['metadata']['guid']
+      #TODO update an service with envvars etc. http://apidocs.cloudfoundry.org/241/services/updating_an_service.html
+    end
+
+    existing_apps = find_app(app_name)
+    app_guid = existing_apps['resources'][0]['metadata']['guid']
+    begin
+      result = RestClient.post("#{@cf_api}/v2/service_bindings",
+                               {app_guid: app_guid, service_instance_guid: service_guid}.to_json, @headers)
+      puts result
+    rescue RestClient::ExceptionWithResponse => err
+      if not JSON.parse(err.response)["error_code"] == "CF-ServiceBindingAppServiceTaken"
+        raise
+      end
+    end
+  end
+
+  def self.find_app(app_name)
     result = RestClient.get("#{@cf_api}/v2/spaces/#{@cf_space_guid}/apps?q=name:#{app_name}&inline-relations-depth=1", @headers)
     JSON.parse(result.body)
+  end
+
+  def self.find_first_app(app_name)
+    find_app(app_name)['resources'][0]
   end
 
   def self.push(app_name, app_manifest, app_zip)
@@ -51,7 +110,7 @@ class CloudFoundry
     existing_apps = find_app(app_name)
     if existing_apps["resources"].empty?
       #TODO load values from manifest.yml including memory, buildpack and environment_json envvars
-      app = {name: app_name, space_guid: @cf_space_guid}
+      app = {name: app_name, space_guid: @space_guid}
       if app_manifest["applications"][0]
         app.merge!(app_manifest["applications"][0])
         if app["memory"]
@@ -62,11 +121,11 @@ class CloudFoundry
       result = RestClient.post("#{@cf_api}/v2/apps",
                                app.to_json, @headers)
       new_app = JSON.parse(result.body)
-      cf_app_guid = new_app["metadata"]["guid"]
-      puts "created new app #{cf_app_guid}"
+      app_guid = new_app["metadata"]["guid"]
+      puts "created new app #{app_guid}"
     else
-      puts "found existing app #{cf_app_guid}"
-      cf_app_guid = existing_apps['resources'][0]['metadata']['guid']
+      puts "found existing app #{app_guid}"
+      app_guid = existing_apps['resources'][0]['metadata']['guid']
       #TODO update an app with envvars etc. http://apidocs.cloudfoundry.org/241/apps/updating_an_app.html
     end
 
@@ -81,7 +140,7 @@ class CloudFoundry
     if existing_routes["resources"].empty?
       # create a new route for app_name if none exist http://apidocs.cloudfoundry.org/241/routes/creating_a_route.html
       result = RestClient.post("#{@cf_api}/v2/routes",
-                               {host: app_name, domain_guid: cf_domain_guid, space_guid: @cf_space_guid}.to_json, @headers)
+                               {host: app_name, domain_guid: cf_domain_guid, space_guid: @space_guid}.to_json, @headers)
       new_route = JSON.parse(result.body)
       cf_route_guid = new_route["metadata"]["guid"]
       puts "created new route #{cf_route_guid}"
@@ -91,11 +150,11 @@ class CloudFoundry
     end
 
     # associate route with app http://apidocs.cloudfoundry.org/241/apps/associate_route_with_the_app.html
-    result = RestClient.put("#{@cf_api}/v2/apps/#{cf_app_guid}/routes/#{cf_route_guid}", {}, @headers)
+    result = RestClient.put("#{@cf_api}/v2/apps/#{app_guid}/routes/#{cf_route_guid}", {}, @headers)
 
     # TODO check if files are already on cf push cache via PUT /v2/resource_match => [{"sha1":"0e0e99e7b065e1adea90072d300ba22cc5b17130","size":34}
     # https://apidocs.cloudfoundry.org/241/apps/uploads_the_bits_for_an_app.html
-    result = RestClient.put("#{@cf_api}/v2/apps/#{cf_app_guid}/bits?async=true",
+    result = RestClient.put("#{@cf_api}/v2/apps/#{app_guid}/bits?async=true",
                             {:resources => [].to_json, :application => File.new(app_zip, 'rb')}, @headers)
     push_job = JSON.parse(result.body)
 
@@ -108,24 +167,35 @@ class CloudFoundry
     puts("push complete for #{app_name}")
   end
 
-  def self.start(app_name)
+  def self.start_app(app_name)
     #start app
-    cf_app_guid =find_app(app_name)['resources'][0]['metadata']['guid']
-    result = RestClient.put("#{@cf_api}/v2/apps/#{cf_app_guid}?async=true", {state: "STARTED"}.to_json, @headers)
+    app_guid =find_app(app_name)['resources'][0]['metadata']['guid']
+    result = RestClient.put("#{@cf_api}/v2/apps/#{app_guid}?async=true", {state: "STARTED"}.to_json, @headers)
     puts(result)
   end
 
-  def self.stop(app_name)
+  def self.stop_app(app_name)
     #stop app
-    cf_app_guid =find_app(app_name)['resources'][0]['metadata']['guid']
-    result = RestClient.put("#{@cf_api}/v2/apps/#{cf_app_guid}?async=true", {state: "STOPPED"}.to_json, @headers)
-    puts(result)
+    if app = find_first_app(app_name)
+      cf_app_guid = app['metadata']['guid']
+      result = RestClient.put("#{@cf_api}/v2/apps/#{cf_app_guid}?async=true", {state: "STOPPED"}.to_json, @headers)
+      puts(result)
+    end
   end
 
-  def self.delete(app_name)
+  def self.delete_app(app_name)
     #delete app
-    cf_app_guid =find_app(app_name)['resources'][0]['metadata']['guid']
-    result = RestClient.delete("#{@cf_api}/v2/apps/#{cf_app_guid}?async=true", {}, @headers)
+    if app = find_first_app(app_name)
+      cf_app_guid = app['metadata']['guid']
+      result = RestClient.delete("#{@cf_api}/v2/apps/#{cf_app_guid}?async=true", @headers)
+      puts(result)
+    end
+  end
+
+  def self.delete_service(service_name)
+    #delete service
+    service_guid =find_service(service_name)['resources'][0]['metadata']['guid']
+    result = RestClient.delete("#{@cf_api}/v2/service_instances/#{service_guid}?async=true", {}, @headers)
     puts(result)
   end
 

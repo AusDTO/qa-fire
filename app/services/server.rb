@@ -41,7 +41,6 @@ class Server
 
   def destroy!
       CloudFoundry.login
-      CloudFoundry.start(app_name)
       CloudFoundry.delete(app_name)
       #Execute.go("cf delete-service -f #{db_service_name}")
   end

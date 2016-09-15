@@ -12,6 +12,7 @@
 /tmp/*
 !/log/.keep
 !/tmp/.keep
+/out/
 
 # Ignore Byebug command history file.
 .byebug_history
@@ -20,4 +21,5 @@
 .env
 
 .idea
+qa-fire.iml
 dump.rdb

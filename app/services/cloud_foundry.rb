@@ -56,10 +56,6 @@ class CloudFoundry
     JSON.parse(result.body)
   end
 
-  def self.find_app(app_name)
-    result = RestClient.get("#{@cf_api}/v2/spaces/#{@space_guid}/apps?q=name:#{app_name}&inline-relations-depth=1", @headers)
-    JSON.parse(result.body)
-  end
 
   def self.create_service(service_name, service_type, service_plan, app_name)
 
@@ -96,6 +92,15 @@ class CloudFoundry
         raise
       end
     end
+  end
+
+  def self.find_app(app_name)
+    result = RestClient.get("#{@cf_api}/v2/spaces/#{@cf_space_guid}/apps?q=name:#{app_name}&inline-relations-depth=1", @headers)
+    JSON.parse(result.body)
+  end
+
+  def self.find_first_app(app_name)
+    find_app(app_name)['resources'][0]
   end
 
   def self.push(app_name, app_manifest, app_zip)
@@ -171,16 +176,20 @@ class CloudFoundry
 
   def self.stop_app(app_name)
     #stop app
-    app_guid =find_app(app_name)['resources'][0]['metadata']['guid']
-    result = RestClient.put("#{@cf_api}/v2/apps/#{app_guid}?async=true", {state: "STOPPED"}.to_json, @headers)
-    puts(result)
+    if app = find_first_app(app_name)
+      cf_app_guid = app['metadata']['guid']
+      result = RestClient.put("#{@cf_api}/v2/apps/#{cf_app_guid}?async=true", {state: "STOPPED"}.to_json, @headers)
+      puts(result)
+    end
   end
 
   def self.delete_app(app_name)
     #delete app
-    app_guid =find_app(app_name)['resources'][0]['metadata']['guid']
-    result = RestClient.delete("#{@cf_api}/v2/apps/#{app_guid}?async=true", {}, @headers)
-    puts(result)
+    if app = find_first_app(app_name)
+      cf_app_guid = app['metadata']['guid']
+      result = RestClient.delete("#{@cf_api}/v2/apps/#{cf_app_guid}?async=true", @headers)
+      puts(result)
+    end
   end
 
   def self.delete_service(service_name)

@@ -103,6 +103,11 @@ curl -X POST -H "Content-Type: application/json" \
 --data  @spec/resources/pr.json localhost:3000/github_webhooks
 ```
 
+Can test more advanced app with DB:
+```
+ curl -X POST -H "Content-Type: application/json" -H "X-Hub-Signature: sha1=8f04cd9cf573a79d66e8ae62e2f432907e902cb4" -H "X-GitHub-Event: pull_request" --data  @spec/resources/pr-php.json localhost:3000/github_webhooks
+```
+
 ## Limitations
 
 * doesn't handle updates to the PR yet

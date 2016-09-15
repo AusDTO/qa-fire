@@ -4,7 +4,8 @@ class Server
   def initialize(pr)
     @pr_number = pr[:number]
     @branch = pr[:head][:ref]
-    @repo_name = pr[:head][:repo][:full_name]
+    @repo_full_name = pr[:head][:repo][:full_name]
+    @repo_name = pr[:head][:repo][:name]
   end
 
   def launch!
@@ -13,7 +14,7 @@ class Server
       app_zip = "#{local_dir}/application.zip"
       app_manifest = {}
       # FIXME: Definite santization problems here!
-      Execute.go("git clone https://github.com/#{@repo_name}.git #{local_dir} --branch #{@branch} --depth 1 --single-branch")
+      Execute.go("git clone https://github.com/#{@repo_full_name}.git #{local_dir} --branch #{@branch} --depth 1 --single-branch")
       FileUtils.cd(local_dir) do
         zf = ZipFileGenerator.new(local_dir, app_zip)
         zf.write()
@@ -21,7 +22,7 @@ class Server
           app_manifest = YAML.load_file("manifest.yml")
         end
       end
-      puts "Launching #{@repo_name} #{@branch} (# #{@pr_number})"
+      puts "Launching #{@repo_full_name} #{@branch} (# #{@pr_number})"
 
       if CloudFoundry.login
         CloudFoundry.push(app_name, app_manifest, app_zip)
@@ -50,7 +51,7 @@ class Server
   end
 
   def app_name
-    "pr-#{@pr_number}"
+    "#{@repo_name}-pr-#{@pr_number}"
   end
 
   def db_service_name

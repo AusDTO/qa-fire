@@ -1,11 +1,12 @@
 class Server
   # @param pr [Hash] the pull request Body hash
   # @see https://developer.github.com/v3/activity/events/types/#pullrequestevent
-  def initialize(pr)
-    @pr_number = pr[:number]
-    @branch = pr[:head][:ref]
-    @repo_full_name = pr[:head][:repo][:full_name]
-    @repo_name = pr[:head][:repo][:name]
+  def initialize(deploy)
+    @deploy = deploy
+    #@pr_number = pr[:number]
+    @branch = deploy.branch#pr[:head][:ref]
+    @repo_full_name = deploy.project.repository#pr[:head][:repo][:full_name]
+    #@repo_name = pr[:head][:repo][:name]
   end
 
   def launch!
@@ -35,22 +36,22 @@ class Server
         SEED_USER_ADMIN_PASSWORD
         SEED_USER_PASSWORD
       ).each { |env| app_manifest["env"].merge!({env => ENV[env]}) if ENV[env] }
-      puts "Launching #{@repo_full_name} #{@branch} (# #{@pr_number})"
+      puts "Launching #{@deploy.name}"
 
       if CloudFoundry.login
-        CloudFoundry.push(app_name, app_manifest, app_zip)
+        CloudFoundry.push(@deploy.name, app_manifest, app_zip)
 
 
         if app_manifest["qafire_services"] && app_manifest["qafire_services"][0]
           CloudFoundry.create_service(db_service_name,
                                       app_manifest["qafire_services"][0]["type"],
                                       app_manifest["qafire_services"][0]["plan"],
-                                      app_name)
+                                      @deploy.name)
         end
 
         #set_envs
 
-        CloudFoundry.start_app(app_name)
+        CloudFoundry.start_app(@deploy.name)
 
         Rails.logger.info("Done")
       end
@@ -61,20 +62,20 @@ class Server
 
   def destroy!
       CloudFoundry.login
-      CloudFoundry.delete_app(app_name)
+      CloudFoundry.delete_app(@deploy.name)
       CloudFoundry.delete_service(db_service_name)
       #Execute.go("cf delete-service -f #{db_service_name}")
   end
 
   def local_dir
-    "#{Dir.tmpdir}/tmp/#{app_name}"
+    "#{Dir.tmpdir}/tmp/#{@deploy.name}"
   end
 
-  def app_name
-    "#{@repo_name}-pr-#{@pr_number}"
-  end
+  # def app_name
+  #   "#{@repo_name}-pr-#{@pr_number}"
+  # end
 
   def db_service_name
-    "#{app_name}-db"
+    "#{@deploy.name}-db"
   end
 end

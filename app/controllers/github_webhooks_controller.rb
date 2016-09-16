@@ -18,8 +18,16 @@ class GithubWebhooksController < ApplicationController
     else
       pr = payload[:pull_request]
 
-      ServerLaunchJob.perform_later(pr) if %w(opened reopened).include?(payload[:action])
-      ServerDestroyJob.perform_later(pr) if payload[:action] == 'closed'
+      # TODO: wrap this up in a deploy object
+      deploy = Deploy.find_or_create_by(remote_reference: pr[:id])
+      deploy.data ||= []
+      deploy.project = project
+      deploy.branch = pr['head']['ref']
+      deploy.name = "pr-#{payload[:number]}-#{deploy.project.name}"
+      deploy.data += [WebhookPayloadService.new(payload).filtered_hash]
+      deploy.save
+
+      DeployService.new(deploy, payload[:action]).perform!
     end
   end
 

@@ -95,7 +95,7 @@ class CloudFoundry
   end
 
   def self.find_app(app_name)
-    result = RestClient.get("#{@cf_api}/v2/spaces/#{@cf_space_guid}/apps?q=name:#{app_name}&inline-relations-depth=1", @headers)
+    result = RestClient.get("#{@cf_api}/v2/spaces/#{@space_guid}/apps?q=name:#{app_name}&inline-relations-depth=1", @headers)
     JSON.parse(result.body)
   end
 

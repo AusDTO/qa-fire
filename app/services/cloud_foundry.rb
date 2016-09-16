@@ -6,7 +6,7 @@ class CloudFoundry
     @cf_api = ENV['CF_API']
     cf_space = ENV['CF_SPACE']
 
-    RestClient.proxy = "http://localhost:8888"
+    # RestClient.proxy = "http://10.0.1.181:8888"
     #use /v2/info to find "authorization_endpoint":"https://login.local.pcfdev.io"
     begin
       info = RestClient.get("#{@cf_api}/v2/info")
@@ -190,7 +190,7 @@ class CloudFoundry
     #delete app
     if app = find_first_app(app_name)
       cf_app_guid = app['metadata']['guid']
-      result = RestClient.delete("#{@cf_api}/v2/apps/#{cf_app_guid}?async=true", @headers)
+      result = RestClient.delete("#{@cf_api}/v2/apps/#{cf_app_guid}?async=tru&recursive=true", @headers)
       puts(result)
     end
   end
@@ -198,7 +198,7 @@ class CloudFoundry
   def self.delete_service(service_name)
     #delete service
     service_guid =find_service(service_name)['resources'][0]['metadata']['guid']
-    result = RestClient.delete("#{@cf_api}/v2/service_instances/#{service_guid}?async=true", {}, @headers)
+    result = RestClient.delete("#{@cf_api}/v2/service_instances/#{service_guid}?async=true", @headers)
     puts(result)
   end
 

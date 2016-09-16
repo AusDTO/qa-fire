@@ -43,6 +43,7 @@ gem 'rubyzip'
 gem 'devise'
 gem 'omniauth-github'
 gem 'haml'
+gem 'gretel'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

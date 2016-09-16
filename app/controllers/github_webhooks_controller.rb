@@ -1,3 +1,5 @@
+require 'exceptions'
+
 class GithubWebhooksController < ApplicationController
   include GithubWebhook::Processor
 
@@ -5,12 +7,14 @@ class GithubWebhooksController < ApplicationController
     skip_before_action :authenticate_github_request!, only: :create
   end
 
+  rescue_from Exceptions::InvalidProjectError, with: :not_found
+
   def github_pull_request(payload)
     # Check Projects
     project = get_project(payload)
 
     if project.nil?
-      raise ActionController::RoutingError.new('Project not found')
+      raise Exceptions::InvalidProjectError.new('Project not found')
     else
       pr = payload[:pull_request]
 
@@ -40,5 +44,10 @@ class GithubWebhooksController < ApplicationController
     else
       return nil
     end
+  end
+
+
+  def not_found
+    render json: { error: 'Project not found'}.to_json, status: 404 and return
   end
 end

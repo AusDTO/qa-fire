@@ -8,5 +8,8 @@ Rails.application.routes.draw do
   require 'sidekiq/web'
   mount Sidekiq::Web => '/queue'
 
-  root to: 'home#home'
+  root to: 'projects#index'
+  resources :projects, path: '/' do
+    resources :deploys
+  end
 end

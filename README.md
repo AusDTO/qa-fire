@@ -95,6 +95,11 @@ CF_PASSWORD=admin
 GITHUB_WEBHOOK_SECRET=
 ```
 
+Run seeds
+```
+rake db:seed
+```
+
 Can test an example webhook using:
 ```
 curl -X POST -H "Content-Type: application/json" \

@@ -6,7 +6,7 @@ class CloudFoundry
     @cf_api = ENV['CF_API']
     cf_space = ENV['CF_SPACE']
 
-    # RestClient.proxy = "http://localhost:8888"
+    RestClient.proxy = "http://localhost:8888"
     #use /v2/info to find "authorization_endpoint":"https://login.local.pcfdev.io"
     begin
       info = RestClient.get("#{@cf_api}/v2/info")
@@ -117,6 +117,9 @@ class CloudFoundry
           app["memory"] = app["memory"].to_i
         end
         app["name"] = app_name
+      end
+      if app_manifest["env"]
+        app["environment_json"] = app_manifest["env"]
       end
       result = RestClient.post("#{@cf_api}/v2/apps",
                                app.to_json, @headers)

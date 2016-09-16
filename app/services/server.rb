@@ -12,7 +12,7 @@ class Server
     begin
       puts "cloning git and creating application archive"
       app_zip = "#{local_dir}/application.zip"
-      app_manifest = {}
+      app_manifest = {application: [{}]}
       # FIXME: Definite santization problems here!
       Execute.go("git clone https://github.com/#{@repo_full_name}.git #{local_dir} --branch #{@branch} --depth 1 --single-branch")
       FileUtils.cd(local_dir) do
@@ -22,10 +22,24 @@ class Server
           app_manifest = YAML.load_file("manifest.yml")
         end
       end
+      app_manifest["env"] = {}
+       %w(
+        APP_DOMAIN
+        AUTHORING_BASE_URL
+        AWS_ACCESS_KEY
+        AWS_SECRET_KEY
+        CONTENT_ANALYSIS_BASE_URL
+        FROM_EMAIL
+        HTTP_PASSWORD
+        HTTP_USERNAME
+        SEED_USER_ADMIN_PASSWORD
+        SEED_USER_PASSWORD
+      ).each { |env| app_manifest["env"].merge!({env => ENV[env]}) if ENV[env] }
       puts "Launching #{@repo_full_name} #{@branch} (# #{@pr_number})"
 
       if CloudFoundry.login
         CloudFoundry.push(app_name, app_manifest, app_zip)
+
 
         if app_manifest["qafire_services"] && app_manifest["qafire_services"][0]
           CloudFoundry.create_service(db_service_name,
@@ -62,25 +76,5 @@ class Server
 
   def db_service_name
     "#{app_name}-db"
-  end
-
-  def set_envs
-    %w(
-      APP_DOMAIN
-      AUTHORING_BASE_URL
-      AWS_ACCESS_KEY
-      AWS_SECRET_KEY
-      CONTENT_ANALYSIS_BASE_URL
-      FROM_EMAIL
-      HTTP_PASSWORD
-      HTTP_USERNAME
-      SEED_USER_ADMIN_PASSWORD
-      SEED_USER_PASSWORD
-    ).each { |env| set_env(env) }
-  end
-
-  def set_env(env, value = ENV[env])
-    # TODO: These data could later be stored in a DB to be more generic
-    Execute.go("cf set-env #{app_name} #{env} #{value}")
   end
 end

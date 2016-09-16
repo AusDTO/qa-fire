@@ -1,0 +1,8 @@
+%ul
+  %li
+    - if user_signed_in?
+      = link_to "Sign out", destroy_user_session_path, method: :delete, role: 'button'
+    - else
+      %a{href: user_github_omniauth_authorize_path, role: 'button'}
+        %span.fa.fa-github
+        Sign in with Github

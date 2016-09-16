@@ -1,0 +1,25 @@
+<head>
+  <title><%= title %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="<%= yield :meta_description %>">
+  <script>
+    (function (h) {
+    h.className = h.className.replace('no-js', 'js')
+    })(document.documentElement)
+  </script>
+  <!--[if lt IE 9]>
+  <script type="text/javascript"
+          src="//cdnjs.cloudflare.com/ajax/libs/corysimmons-selectivizr2/1.0.8/selectivizr2.min.js"></script>
+  <![endif]-->
+  <!--[if lte IE 9]>
+  <script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js'></script>
+  <![endif]-->
+
+  <%= favicon_link_tag 'favicon.ico' %>
+  <%= csrf_meta_tags %>
+  <%= javascript_include_tag 'fonts', 'data-turbolinks-track': 'reload' %>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= stylesheet_link_tag 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css' %>
+  <%= stylesheet_link_tag 'https://gov-au-ui-kit.apps.staging.digital.gov.au/latest/ui-kit.css' %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+</head>

@@ -108,6 +108,14 @@ Can test more advanced app with DB:
  curl -X POST -H "Content-Type: application/json" -H "X-Hub-Signature: sha1=8f04cd9cf573a79d66e8ae62e2f432907e902cb4" -H "X-GitHub-Event: pull_request" --data  @spec/resources/pr-php.json localhost:3000/github_webhooks
 ```
 
+For OAuth, create a [new GitHub application](https://github.com/settings/developers) and
+set the authorization callback URL to `http://localhost:3000/users/auth/github/callback`.
+Then set the Client ID and Client Secret environment variables in `.env`:
+```
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+```
+
 ## Limitations
 
 * doesn't handle updates to the PR yet

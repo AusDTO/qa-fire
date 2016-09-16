@@ -1,6 +1,10 @@
 class GithubWebhooksController < ApplicationController
   include GithubWebhook::Processor
 
+  if Rails.env.development?
+    skip_before_action :authenticate_github_request!, only: :create
+  end
+
   def github_pull_request(payload)
     # Check Projects
     project = get_project(payload)

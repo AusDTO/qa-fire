@@ -2,18 +2,39 @@ class GithubWebhooksController < ApplicationController
   include GithubWebhook::Processor
 
   def github_pull_request(payload)
-    pr = payload[:pull_request]
+    # Check Projects
+    project = get_project(payload)
 
-    ServerLaunchJob.perform_later(pr) if %w(opened reopened).include?(payload[:action])
-    ServerDestroyJob.perform_later(pr) if payload[:action] == 'closed'
+    if project.nil?
+      raise ActionController::RoutingError.new('Project not found')
+    else
+      pr = payload[:pull_request]
+
+      ServerLaunchJob.perform_later(pr) if %w(opened reopened).include?(payload[:action])
+      ServerDestroyJob.perform_later(pr) if payload[:action] == 'closed'
+    end
   end
 
   def webhook_secret(payload)
-    ENV['GITHUB_WEBHOOK_SECRET']
+    project = get_project(payload)
+    unless project.nil?
+      return project.webhook_secret
+    end
+
+    return ''
   end
 
   private
-    def server(payload)
-      Server.new(payload[:pull_request])
+  def server(payload)
+    Server.new(payload[:pull_request])
+  end
+
+
+  def get_project(payload)
+    if payload.keys.include?('repository') && payload[:repository].keys.include?('full_name')
+      Project.find_by(repository: payload[:repository][:full_name])
+    else
+      return nil
     end
+  end
 end

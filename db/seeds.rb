@@ -5,3 +5,6 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+Project.find_or_create_by(repository: 'maxious/helloworld-html')
+Project.find_or_create_by(repository: 'maxious/helloworld-php')

@@ -45,9 +45,7 @@ gem 'omniauth-github'
 gem 'haml'
 gem 'gretel'
 
-# https://github.com/drapergem/draper/issues/697
-gem 'activemodel-serializers-xml', github: 'rails/activemodel-serializers-xml'
-gem 'draper'
+gem 'draper', '>= 3.0.0.pre1', '< 4'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

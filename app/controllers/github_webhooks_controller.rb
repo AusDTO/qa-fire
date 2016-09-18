@@ -22,6 +22,7 @@ class GithubWebhooksController < ApplicationController
       deploy = Deploy.find_or_create_by(remote_reference: pr[:id])
       deploy.data ||= []
       deploy.project = project
+      deploy.trigger = 'github'
       deploy.branch = pr['head']['ref']
       deploy.name = "pr-#{payload[:number]}-#{deploy.project.name}"
       deploy.data += [WebhookPayloadService.new(payload).filtered_hash]

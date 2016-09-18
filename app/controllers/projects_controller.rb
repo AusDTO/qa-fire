@@ -1,4 +1,6 @@
 class ProjectsController < ApplicationController
+  decorates_assigned :project
+
   def index
     @projects = Project.all
   end

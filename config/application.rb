@@ -24,5 +24,7 @@ module QaFire
 
     config.active_job.queue_adapter = :sidekiq
     config.exceptions_app = self.routes
+
+    config.deploy_base_url = ENV['DEPLOY_BASE_URL']
   end
 end

@@ -1,9 +1,9 @@
 - breadcrumb :project, @project
 
-%h1= @project.repository
+%h1= project.repository
 
 %h2 Deploys
 
 %ul
-  - @project.deploys.each do |deploy|
-    %li= deploy.url
+  - project.deploys.each do |deploy|
+    %li= link_to(deploy.name, deploy.url)

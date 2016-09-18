@@ -16,18 +16,7 @@ class GithubWebhooksController < ApplicationController
     if project.nil?
       raise Exceptions::InvalidProjectError.new('Project not found')
     else
-      pr = payload[:pull_request]
-
-      # TODO: wrap this up in a deploy object
-      deploy = Deploy.find_or_create_by(remote_reference: pr[:id])
-      deploy.data ||= []
-      deploy.project = project
-      deploy.trigger = 'github'
-      deploy.branch = pr['head']['ref']
-      deploy.name = "pr-#{payload[:number]}-#{deploy.project.name}"
-      deploy.data += [WebhookPayloadService.new(payload).filtered_hash]
-      deploy.save
-
+      deploy = GithubWebhookService.new(project, payload).perform!
       DeployService.new(deploy, payload[:action]).perform!
     end
   end

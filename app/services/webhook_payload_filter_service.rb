@@ -1,4 +1,4 @@
-class WebhookPayloadService
+class WebhookPayloadFilterService
   def initialize(payload)
     @payload = payload
   end

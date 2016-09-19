@@ -7,12 +7,15 @@ class GithubWebhookService
 
   def perform!
     deploy = Deploy.find_or_create_by(remote_reference: @payload[:pull_request][:id])
-    deploy.data ||= []
+    deploy.events ||= []
     deploy.project = @project
+    deploy.environment = @project.environment
     deploy.trigger = 'github'
     deploy.branch = @payload[:pull_request]['head']['ref']
     deploy.name = "pr-#{@payload[:number]}-#{deploy.project.name}"
-    deploy.data += [WebhookPayloadFilterService.new(payload).filtered_hash]
+    deploy.events += [WebhookPayloadFilterService.new(@payload).filtered_hash]
     deploy.save
+
+    return deploy
   end
 end

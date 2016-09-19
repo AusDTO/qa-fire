@@ -6,7 +6,17 @@ class DeployService
 
 
   def perform!
-    ServerLaunchJob.perform_later(@deploy) if %w(opened reopened).include?(@action)
-    ServerDestroyJob.perform_later(@deploy) if @action == 'closed'
+    if deploy_action.keys.include? @action
+      deploy_action[@action].perform_later(@deploy)
+    end
+  end
+
+
+  def deploy_action
+    {
+      'opened' => ServerLaunchJob,
+      'reopened' => ServerLaunchJob,
+      'closed' => ServerDestroyJob
+    }
   end
 end

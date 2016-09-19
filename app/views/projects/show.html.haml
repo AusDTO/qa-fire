@@ -2,8 +2,32 @@
 
 %h1= project.repository
 
+%h2 Environment
+
+- unless project.environment.nil?
+  %table.content-table
+    %thead
+      %tr
+        %th Key
+        %th Value
+    %tbody
+      - project.environment.keys.each do |key|
+        %tr
+          %td= key
+          %td= project.environment[key]
+
+%details.accordion--controls{"aria-expanded" => false}
+  %summary Edit
+  %div.accordion-panel
+    %p
+      = simple_form_for @project do |f|
+        ~ f.input :environment_raw, label: false, as: :text, input_html: {rows: 8}
+        = f.button :submit
+
+
 %h2 Deploys
 
 %ul
   - project.deploys.each do |deploy|
     %li= link_to(deploy.name, deploy.url)
+

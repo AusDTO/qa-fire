@@ -23,19 +23,9 @@ class Server
           app_manifest = YAML.load_file("manifest.yml")
         end
       end
-      app_manifest["env"] = {}
-       %w(
-        APP_DOMAIN
-        AUTHORING_BASE_URL
-        AWS_ACCESS_KEY
-        AWS_SECRET_KEY
-        CONTENT_ANALYSIS_BASE_URL
-        FROM_EMAIL
-        HTTP_PASSWORD
-        HTTP_USERNAME
-        SEED_USER_ADMIN_PASSWORD
-        SEED_USER_PASSWORD
-      ).each { |env| app_manifest["env"].merge!({env => ENV[env]}) if ENV[env] }
+
+      app_manifest["env"] = @deploy.environment
+
       puts "Launching #{@deploy.name}"
 
       if CloudFoundry.login

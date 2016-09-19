@@ -80,6 +80,9 @@ test:
 #
 production:
   <<: *default
-  database: qa-fire_production
-  username: qa-fire
-  password: <%= ENV['QA-FIRE_DATABASE_PASSWORD'] %>
+  database: <%= ENV['DB_NAME'] || 'qa-fire_production' %>
+  url: <%= ENV['BLUE_GREEN_URL'] || ENV['DATABASE_URL'] %>
+  adapter:  postgresql
+  encoding: unicode
+  pool:     <%= ENV['DB_CONCURRENCY'] || 10 %>
+  timeout:  5000

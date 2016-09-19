@@ -50,10 +50,6 @@ QA Fire uses the [github_webhook](https://github.com/ssaunier/github_webhook) ge
 
 TODO: Explain how to set up a webhook
 
-### Webhook Secret
-
-The webhook secret should be set via the `GITHUB_WEBHOOK_SECRET` environment variable.
-
 ## Cloud Foundry
 
 QA Fire makes all deployments to cloud foundry (see app/services/server.rb) and follows these basic steps:

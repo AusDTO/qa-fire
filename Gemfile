@@ -44,6 +44,7 @@ gem 'devise'
 gem 'omniauth-github'
 gem 'haml'
 gem 'gretel'
+gem 'simple_form'
 gem 'cf-app-utils' # cloudfoundry utils
 
 gem 'draper', '>= 3.0.0.pre1', '< 4'

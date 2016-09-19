@@ -14,7 +14,8 @@ class User < ApplicationRecord
 
   # return primary email if it matches regexp. Otherwise, try and find one that matches.
   def self.valid_email(strategy)
-    strategy.emails.sort_by { |email| email['primary'] ? 0 : 1 }.find {|email| valid_email?(email)}
+    email_hash = strategy.emails.sort_by { |email| email['primary'] ? 0 : 1 }.find {|email| valid_email?(email)}
+    email_hash['email'] if email_hash
   end
 
   def self.valid_email?(email)

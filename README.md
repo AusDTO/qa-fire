@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/AusDTO/qa-fire.png?label=ready&title=Ready)](https://waffle.io/AusDTO/qa-fire)
 # README
 
 ## Why QA Fire?

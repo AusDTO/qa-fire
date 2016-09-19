@@ -4,14 +4,6 @@
 
 %h2 Environment
 
-%details.accordion--controls{"aria-expanded" => true}
-  %summary Edit
-  %div.accordion-panel
-    %p
-      = simple_form_for @project do |f|
-        ~ f.input :environment_raw, label: false, as: :text, input_html: {rows: 8}
-        = f.button :submit
-
 - unless project.environment.nil?
   %table.content-table
     %thead
@@ -24,6 +16,13 @@
           %td= key
           %td= project.environment[key]
 
+%details.accordion--controls{"aria-expanded" => false}
+  %summary Edit
+  %div.accordion-panel
+    %p
+      = simple_form_for @project do |f|
+        ~ f.input :environment_raw, label: false, as: :text, input_html: {rows: 8}
+        = f.button :submit
 
 
 %h2 Deploys

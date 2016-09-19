@@ -1,0 +1,4 @@
+cleanup_deploys_job:
+  cron: "*/5 * * * * "
+  class: "CleanupDeploysJob"
+  queue: "default"

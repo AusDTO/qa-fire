@@ -1,0 +1,4 @@
+= simple_form_for @project do |f|
+  = f.input :repository, required: true
+  = f.input :webhook_secret, required: false
+  = f.button :button

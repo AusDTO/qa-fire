@@ -1,7 +1,9 @@
 - breadcrumb :root
 
-%h1 Home
+%h1 Projects
 
 %ul
   - @projects.each do |project|
     %li= link_to(project.repository, project_path(project))
+
+= link_to 'New project', new_project_path

@@ -4,6 +4,7 @@ class Project < ApplicationRecord
   store_accessor :data, :environment
 
   validates :environment_raw, json: true
+  validates :repository, presence: true
 
   def name
     self.repository.split('/').reject(&:blank?).last

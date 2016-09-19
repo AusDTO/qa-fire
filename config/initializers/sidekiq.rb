@@ -1,5 +1,5 @@
 redis_url = ENV['REDIS_URL'] || nil
-if JSON.parse(ENV['VCAP_SERVICES'])["p-redis"]
+if ENV['VCAP_SERVICES'] && JSON.parse(ENV['VCAP_SERVICES'])["p-redis"]
   creds = JSON.parse(ENV['VCAP_SERVICES'])["p-redis"].first['credentials']
   redis_url = "redis://:#{creds['password']}@#{creds['host']}:#{creds['port']}/0"
 end

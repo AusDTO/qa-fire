@@ -9,10 +9,8 @@ class ProjectsController < ApplicationController
 
 
   def update
-    #json_input = JSON.parse(project_params[:environment_raw])
-    @project.environment = project_params[:environment]
-    if @project.save
-      redirect_to :show
+    if @project.update(project_params)
+      redirect_to project_path(@project)
     else
       render :show
     end

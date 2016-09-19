@@ -9,7 +9,7 @@
   %div.accordion-panel
     %p
       = simple_form_for @project do |f|
-        ~ f.input :environment, label: false, as: :text, input_html: {rows: 8}
+        ~ f.input :environment_raw, label: false, as: :text, input_html: {rows: 8}
         = f.button :submit
 
 - unless project.environment.nil?

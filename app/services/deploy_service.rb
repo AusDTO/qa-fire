@@ -16,6 +16,7 @@ class DeployService
     {
       'opened' => ServerLaunchJob,
       'reopened' => ServerLaunchJob,
+      'synchronize' => ServerLaunchJob,
       'closed' => ServerDestroyJob
     }
   end

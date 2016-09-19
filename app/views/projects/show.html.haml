@@ -22,7 +22,7 @@
     %p
       = simple_form_for @project do |f|
         ~ f.input :environment_raw, label: false, as: :text, input_html: {rows: 8}
-        = f.button :submit
+        = f.button :button
 
 
 %h2 Deploys
@@ -31,3 +31,5 @@
   - project.deploys.each do |deploy|
     %li= link_to(deploy.name, deploy.url)
 
+= link_to "Destroy project #{project.repository}", project_path(@project), method: :delete, role: :button,
+    data: {confirm: 'Are you sure?'}

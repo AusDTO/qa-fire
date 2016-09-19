@@ -1,12 +1,8 @@
 class Server
-  # @param pr [Hash] the pull request Body hash
-  # @see https://developer.github.com/v3/activity/events/types/#pullrequestevent
   def initialize(deploy)
     @deploy = deploy
-    #@pr_number = pr[:number]
-    @branch = deploy.branch#pr[:head][:ref]
-    @repo_full_name = deploy.project.repository#pr[:head][:repo][:full_name]
-    #@repo_name = pr[:head][:repo][:name]
+    @branch = deploy.branch
+    @repo_full_name = deploy.project.repository
   end
 
   def launch!
@@ -50,20 +46,19 @@ class Server
     end
   end
 
+  def update!
+    CloudFoundry.login
+  end
+
   def destroy!
-      CloudFoundry.login
-      CloudFoundry.delete_app(@deploy.name)
-      CloudFoundry.delete_service(db_service_name)
-      #Execute.go("cf delete-service -f #{db_service_name}")
+    CloudFoundry.login
+    CloudFoundry.delete_app(@deploy.name)
+    CloudFoundry.delete_service(db_service_name)
   end
 
   def local_dir
     "#{Dir.tmpdir}/tmp/#{@deploy.name}"
   end
-
-  # def app_name
-  #   "#{@repo_name}-pr-#{@pr_number}"
-  # end
 
   def db_service_name
     "#{@deploy.name}-db"

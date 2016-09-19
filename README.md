@@ -88,7 +88,6 @@ CF_ORG=pcfdev-org
 CF_SPACE=pcfdev-space
 CF_USERNAME=admin
 CF_PASSWORD=admin
-GITHUB_WEBHOOK_SECRET=
 ```
 
 Run seeds

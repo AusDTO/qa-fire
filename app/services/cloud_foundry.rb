@@ -36,6 +36,12 @@ class CloudFoundry
     true
   end
 
+  def self.find_shared_domains
+    result = RestClient.get("#{@cf_api}/v2/shared_domains", @headers)
+    shared_domains = JSON.parse(result.body)
+    shared_domains['resources']
+  end
+
   def self.find_space(space_name)
     result = RestClient.get("#{@cf_api}/v2/spaces?q=name:#{space_name}", @headers)
     JSON.parse(result.body)
@@ -133,9 +139,7 @@ class CloudFoundry
     end
 
     # find a domain name to use for app route
-    result = RestClient.get("#{@cf_api}/v2/shared_domains", @headers)
-    shared_domains = JSON.parse(result.body)
-    cf_domain_guid = shared_domains['resources'][0]['metadata']['guid']
+    cf_domain_guid = find_shared_domains.first['metadata']['guid']
 
     # check for existing routes for app
     result = RestClient.get("#{@cf_api}/v2/routes?inline-relations-depth=1&q=host:#{app_name};domain_guid:#{@cf_domain_guid}", @headers)
@@ -174,7 +178,7 @@ class CloudFoundry
     #start app
     app_guid =find_app(app_name)['resources'][0]['metadata']['guid']
     result = RestClient.put("#{@cf_api}/v2/apps/#{app_guid}?async=true", {state: "STARTED"}.to_json, @headers)
-    puts(result)
+    puts("start complete for #{app_name}")
   end
 
   def self.stop_app(app_name)
@@ -182,7 +186,7 @@ class CloudFoundry
     if app = find_first_app(app_name)
       cf_app_guid = app['metadata']['guid']
       result = RestClient.put("#{@cf_api}/v2/apps/#{cf_app_guid}?async=true", {state: "STOPPED"}.to_json, @headers)
-      puts(result)
+      puts("stop complete for #{app_name}")
     end
   end
 
@@ -191,7 +195,7 @@ class CloudFoundry
     if app = find_first_app(app_name)
       cf_app_guid = app['metadata']['guid']
       result = RestClient.delete("#{@cf_api}/v2/apps/#{cf_app_guid}?async=tru&recursive=true", @headers)
-      puts(result)
+      puts("delete complete for #{app_name}")
     end
   end
 

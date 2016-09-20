@@ -22,22 +22,22 @@ class Server
 
       app_manifest["env"] = @deploy.environment
 
-      puts "Launching #{@deploy.name}"
+      puts "Launching #{@deploy.full_name}"
 
       if CloudFoundry.login
-        CloudFoundry.push(@deploy.name, app_manifest, app_zip)
+        CloudFoundry.push(@deploy.full_name, app_manifest, app_zip)
 
 
         if app_manifest["qafire_services"] && app_manifest["qafire_services"][0]
           CloudFoundry.create_service(db_service_name,
                                       app_manifest["qafire_services"][0]["type"],
                                       app_manifest["qafire_services"][0]["plan"],
-                                      @deploy.name)
+                                      @deploy.full_name)
         end
 
         #set_envs
 
-        CloudFoundry.start_app(@deploy.name)
+        CloudFoundry.start_app(@deploy.full_name)
 
         Rails.logger.info("Done")
       end
@@ -52,15 +52,15 @@ class Server
 
   def destroy!
     CloudFoundry.login
-    CloudFoundry.delete_app(@deploy.name)
+    CloudFoundry.delete_app(@deploy.full_name)
     CloudFoundry.delete_service(db_service_name)
   end
 
   def local_dir
-    "#{Dir.tmpdir}/tmp/#{@deploy.name}"
+    "#{Dir.tmpdir}/tmp/#{@deploy.full_name}"
   end
 
   def db_service_name
-    "#{@deploy.name}-db"
+    "#{@deploy.full_name}-db"
   end
 end

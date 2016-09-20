@@ -7,7 +7,7 @@ class CleanupDeploysJob < ApplicationJob
 
     # Ensure Deploy objects exist in cf
     delete_ids = Deploy.all.inject([]) do |agg, deploy|
-      if CloudFoundry.find_app(deploy.name)['total_results'] == 0
+      if CloudFoundry.find_app(deploy.full_name)['total_results'] == 0
         agg << deploy
       end
 

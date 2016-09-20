@@ -1,5 +1,6 @@
 class Project < ApplicationRecord
   has_many :deploys
+  belongs_to :user
 
   store_accessor :data, :environment
 

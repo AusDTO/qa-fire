@@ -15,6 +15,7 @@ class ProjectsController < ApplicationController
     unless collaborator?(@project.repository)
       render :new and return
     end
+    @project.user = current_user
     if @project.save
       redirect_to project_path(@project)
     else

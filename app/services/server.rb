@@ -39,7 +39,10 @@ class Server
 
         CloudFoundry.start_app(@deploy.full_name)
 
-        Rails.logger.info("Done")
+        puts 'Posting status to github'
+        GithubStatusService.new(@deploy).perform!
+
+        puts 'Done'
       end
     ensure
       FileUtils.remove_entry_secure(local_dir)

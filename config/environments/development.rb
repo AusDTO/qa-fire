@@ -53,3 +53,11 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 end
+
+# Log github api requests
+stack = Faraday::RackBuilder.new do |builder|
+  builder.response :logger
+  builder.use Octokit::Response::RaiseError
+  builder.adapter Faraday.default_adapter
+end
+Octokit.middleware = stack

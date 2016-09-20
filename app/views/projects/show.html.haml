@@ -2,6 +2,10 @@
 
 %h1= project.repository
 
+- if @project.user
+  %p
+    Owned by: #{@project.user.username}
+
 %h2 Environment
 
 - unless project.environment.nil?

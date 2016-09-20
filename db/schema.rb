@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160919232427) do
+ActiveRecord::Schema.define(version: 20160920020742) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(version: 20160919232427) do
     t.json     "data"
     t.integer  "remote_reference"
     t.string   "branch"
+    t.string   "sha"
     t.index ["project_id"], name: "index_deploys_on_project_id", using: :btree
   end
 
@@ -33,6 +34,8 @@ ActiveRecord::Schema.define(version: 20160919232427) do
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
     t.json     "data"
+    t.integer  "user_id"
+    t.index ["user_id"], name: "index_projects_on_user_id", using: :btree
   end
 
   create_table "users", force: :cascade do |t|
@@ -54,4 +57,5 @@ ActiveRecord::Schema.define(version: 20160919232427) do
   end
 
   add_foreign_key "deploys", "projects"
+  add_foreign_key "projects", "users"
 end

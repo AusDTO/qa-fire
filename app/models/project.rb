@@ -3,6 +3,7 @@ class Project < ApplicationRecord
   belongs_to :user
 
   store_accessor :data, :environment
+  store_accessor :data, :delete_flag
 
   validates :environment_raw, json: true
   validates :repository, presence: true, uniqueness: true

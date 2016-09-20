@@ -49,7 +49,18 @@ class ProjectsController < ApplicationController
   end
 
   def destroy
-    @project.destroy
+    if @project.deploys.blank?
+      @project.destroy
+    else
+      @project.update(delete_flag: true)
+
+      @project.deploys.each do |deploy|
+        ServerDestroyJob.perform_later(deploy)
+      end
+
+      flash[:notice] = 'The Project will be removed after all deploys have been deleted'
+    end
+
     redirect_to projects_path
   end
 

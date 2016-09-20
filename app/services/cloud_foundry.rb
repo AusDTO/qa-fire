@@ -206,6 +206,14 @@ class CloudFoundry
     puts(result)
   end
 
+  def self.get_env(app_name)
+    if app = find_first_app(app_name)
+      cf_app_guid = app['metadata']['guid']
+      result = RestClient.get("#{@cf_api}/v2/apps/#{cf_app_guid}/env", @headers)
+      JSON.parse(result.body)
+    end
+  end
+
 rescue RestClient::ExceptionWithResponse => err
   puts err.response
   raise

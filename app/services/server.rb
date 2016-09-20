@@ -37,6 +37,8 @@ class Server
 
         #set_envs
 
+        DatabaseService.new(app_manifest, @deploy.name).perform!
+
         CloudFoundry.start_app(@deploy.full_name)
 
         puts 'Posting status to github'

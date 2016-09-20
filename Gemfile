@@ -48,6 +48,7 @@ gem 'simple_form'
 gem 'cf-app-utils' # cloudfoundry utils
 gem 'draper', '>= 3.0.0.pre1', '< 4'
 gem 'sidekiq-cron', '~> 0.4.0'
+gem 'aws-sdk', '~> 2.5.0'
 gem 'octokit', '~> 4.0'
 
 group :development, :test do

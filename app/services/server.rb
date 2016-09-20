@@ -27,15 +27,9 @@ class Server
       if CloudFoundry.login
         CloudFoundry.push(@deploy.full_name, app_manifest, app_zip)
 
-
-        if app_manifest["qafire_services"] && app_manifest["qafire_services"][0]
-          CloudFoundry.create_service(db_service_name,
-                                      app_manifest["qafire_services"][0]["type"],
-                                      app_manifest["qafire_services"][0]["plan"],
-                                      @deploy.full_name)
-        end
-
         #set_envs
+
+        DatabaseService.new(app_manifest, @deploy).perform!
 
         CloudFoundry.start_app(@deploy.full_name)
 
@@ -63,6 +57,7 @@ class Server
     "#{Dir.tmpdir}/tmp/#{@deploy.full_name}"
   end
 
+  #TODO: DRY
   def db_service_name
     "#{@deploy.full_name}-db"
   end

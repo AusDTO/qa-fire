@@ -48,6 +48,7 @@ gem 'simple_form'
 gem 'cf-app-utils' # cloudfoundry utils
 gem 'draper', '>= 3.0.0.pre1', '< 4'
 gem 'sidekiq-cron', '~> 0.4.0'
+gem 'octokit', '~> 4.0'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -67,6 +68,10 @@ end
 group :test do
   gem 'capybara'
   gem 'recursive-open-struct'
+  gem 'webmock'
+  gem 'fabrication'
+  gem 'faker'
+  gem 'shoulda-matchers'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

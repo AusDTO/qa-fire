@@ -3,11 +3,9 @@ class User < ApplicationRecord
          :omniauth_providers => [:github]
 
   def self.from_omniauth(auth, strategy)
-    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
-      user.email = valid_email(strategy)
-      raise Exceptions::NoValidEmailError unless user.email
-      user.github_token = auth.credentials.token
-    end
+    user = find_or_initialize_by(provider: auth.provider, uid: auth.uid)
+    user.update(username: auth.info.nickname, email: valid_email(strategy), github_token: auth.credentials.token)
+    user
   end
 
   private
@@ -15,7 +13,11 @@ class User < ApplicationRecord
   # return primary email if it matches regexp. Otherwise, try and find one that matches.
   def self.valid_email(strategy)
     email_hash = strategy.emails.sort_by { |email| email['primary'] ? 0 : 1 }.find {|email| valid_email?(email)}
-    email_hash['email'] if email_hash
+    if email_hash
+      email_hash['email']
+    else
+      raise Exceptions::NoValidEmailError
+    end
   end
 
   def self.valid_email?(email)

@@ -12,6 +12,9 @@ class ProjectsController < ApplicationController
 
   def create
     @project = Project.new(new_project_params)
+    unless collaborator?(@project.repository)
+      render :new and return
+    end
     if @project.save
       redirect_to project_path(@project)
     else
@@ -47,4 +50,17 @@ class ProjectsController < ApplicationController
   def get_project
     @project = Project.find(params[:id])
   end
+
+  def collaborator?(repo)
+    if Octokit::Client.new(access_token: current_user.github_token).collaborator?(repo, current_user.username)
+      return true
+    else
+      flash[:alert] = 'You must be a collaborator of the repository'
+      return false
+    end
+  rescue Octokit::InvalidRepository
+    flash[:alert] = 'Invalid repository name'
+    return false
+  end
+
 end

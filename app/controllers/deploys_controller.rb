@@ -14,6 +14,7 @@ class DeploysController < ApplicationController
     @deploy = Deploy.new(deploy_params)
     @deploy.project = @project
     @deploy.trigger = 'manual'
+    @deploy.user = current_user
 
     if @deploy.save
       ServerLaunchJob.perform_later(@deploy)

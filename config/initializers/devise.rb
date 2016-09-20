@@ -157,7 +157,7 @@ Devise.setup do |config|
   config.password_length = 6..128
 
   # Email regex used to validate email formats.
-  config.email_regexp = Regexp.new(ENV['VALID_EMAIL_REGEX'] || '.*@digital.gov.au', Regexp::IGNORECASE)
+  config.email_regexp = Regexp.new(ENV['VALID_EMAIL_REGEX'] || '\A.*@digital.gov.au\Z', Regexp::IGNORECASE)
 
   # ==> Configuration for :timeoutable
   # The time you want to timeout the user session without activity. After this

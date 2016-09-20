@@ -29,7 +29,11 @@
 
 %ul
   - project.deploys.each do |deploy|
-    %li= link_to(deploy.name, deploy.url)
+    %li= link_to(deploy.full_name, deploy.url)
 
-= link_to "Destroy project #{project.repository}", project_path(@project), method: :delete, role: :button,
-    data: {confirm: 'Are you sure?'}
+%p
+  = link_to 'Create manual deploy', new_project_deploy_path(@project)
+
+%p
+  =link_to "Destroy project #{project.repository}", project_path(@project), method: :delete, role: :button,
+        data: {confirm: 'Are you sure?'}

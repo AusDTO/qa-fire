@@ -13,18 +13,10 @@
 = link_to 'Create manual deploy', new_project_deploy_path(@project)
 %h3 Managed by people
 
-%ul
-  - if @manual_deploys.blank?
-    No deploys created manually
-  - else
-    - manual_deploys.each do |deploy|
-      %li= link_to(deploy.full_name, deploy.url)
+= render 'deploy_table', deploys: manual_deploys do |deploy|
+  = link_to('destroy', project_deploy_path(deploy.project, deploy), method: :delete, data: {confirm: 'Are you sure?'})
 
 %h3 Managed by GitHub
 
-%ul
-  - if @github_deploys.blank?
-    No deploys from pull requests
-  - else
-    - github_deploys.each do |deploy|
-      %li= link_to(deploy.full_name, deploy.url)
+= render 'deploy_table', deploys: github_deploys do |deploy|
+  = link_to('github', "https://github.com/#{@project.repository}/pulls/#{deploy.pr}", rel: :external)

@@ -52,6 +52,10 @@ class CloudFoundry
     JSON.parse(result.body)
   end
 
+  def self.find_first_service(service_name)
+    find_service(service_name)['resources'][0]
+  end
+
   def self.find_service_type(service_type_name)
     result = RestClient.get("#{@cf_api}/v2/services?q=label:#{service_type_name}", @headers)
     JSON.parse(result.body)
@@ -201,9 +205,11 @@ class CloudFoundry
 
   def self.delete_service(service_name)
     #delete service
-    service_guid =find_service(service_name)['resources'][0]['metadata']['guid']
-    result = RestClient.delete("#{@cf_api}/v2/service_instances/#{service_guid}?async=true", @headers)
-    puts(result)
+    if app = find_first_service(service_name)
+      service_guid =app['metadata']['guid']
+      result = RestClient.delete("#{@cf_api}/v2/service_instances/#{service_guid}?async=true", @headers)
+      puts(result)
+    end
   end
 
 rescue RestClient::ExceptionWithResponse => err

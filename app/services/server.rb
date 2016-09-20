@@ -28,10 +28,10 @@ class Server
         CloudFoundry.push(@deploy.full_name, app_manifest, app_zip)
 
 
-        if app_manifest["qafire_services"] && app_manifest["qafire_services"][0]
+        if app_manifest["qafire"] && app_manifest["qafire"]["services"] && app_manifest["qafire"]["services"][0]
           CloudFoundry.create_service(db_service_name,
-                                      app_manifest["qafire_services"][0]["type"],
-                                      app_manifest["qafire_services"][0]["plan"],
+                                      app_manifest["qafire"]["services"][0]["type"],
+                                      app_manifest["qafire"]["services"][0]["plan"],
                                       @deploy.full_name)
         end
 

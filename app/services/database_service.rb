@@ -54,6 +54,6 @@ class DatabaseService
   end
 
   def type
-    @app_manifest["qafire_services"][0]["type"]
+    @app_manifest["qafire"]["services"][0]["type"]
   end
 end

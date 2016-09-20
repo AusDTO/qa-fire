@@ -59,6 +59,9 @@ class ProjectsController < ApplicationController
       flash[:alert] = 'You must be a collaborator of the repository'
       return false
     end
+  rescue Octokit::Forbidden
+    flash[:alert] = 'You must be a collaborator of the repository'
+    return false
   rescue Octokit::InvalidRepository
     flash[:alert] = 'Invalid repository name'
     return false

@@ -1,10 +1,29 @@
 class DatabaseService
-  def initialize app_manifest, app_name
-    @app_name = app_name
+  def initialize(app_manifest, deploy)
     @app_manifest = app_manifest
+    @deploy = deploy
   end
 
   def perform!
+    unless @app_manifest["qafire"] && @app_manifest["qafire"]["services"] && @app_manifest["qafire"]["services"][0]
+      puts "No services"
+      return
+    end
+
+    CloudFoundry.login
+    new_db_service = CloudFoundry.find_service(db_service_name)["resources"].empty?
+
+    #TODO could refactor create_service so it works better with this service
+    CloudFoundry.create_service(db_service_name,
+                                @app_manifest["qafire"]["services"][0]["type"],
+                                @app_manifest["qafire"]["services"][0]["plan"],
+                                @deploy.full_name)
+
+    unless new_db_service
+      puts 'Skipping populating database - service previously existed'
+      return
+    end
+
     unless s3_bucket && s3_key
       puts 'Skipping populating database - S3 bucket/key missing'
       return
@@ -38,11 +57,15 @@ class DatabaseService
 
   def database_url
     CloudFoundry.login
-    CloudFoundry.get_env(@app_name)['system_env_json']['VCAP_SERVICES'][type][0]['credentials']['uri']
+    CloudFoundry.get_env(@deploy.full_name)['system_env_json']['VCAP_SERVICES'][type][0]['credentials']['uri']
   end
 
   def aws_creds
     Aws::Credentials.new(ENV['AWS_S3_ACCESS_KEY_ID'], ENV['AWS_S3_SECRET_ACCESS_KEY'])
+  end
+
+  def db_service_name
+    "#{@deploy.full_name}-db"
   end
 
   def s3_bucket

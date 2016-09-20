@@ -22,4 +22,4 @@ deployment:
       - cf api https://api.system.staging.digital.gov.au
       - cf auth $CF_STAGING_USER $CF_STAGING_PASSWORD
       - cf target -o dto -s dtomisc
-      - ./bin/deploy.sh
+      - sh ./bin/deploy.sh

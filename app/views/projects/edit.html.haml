@@ -1,0 +1,20 @@
+- breadcrumb :edit_project, @project
+
+%h1= @project.repository
+
+= simple_form_for @project, url: project_path(@project.id), html: {method: :put} do |f|
+  = f.input :webhook_secret, required: false
+  ~ f.input :environment_raw, as: :text, input_html: {rows: 8}
+  - unless @project.user.nil?
+    %p Currently owned by: #{@project.user.username}
+  - unless @project.user == current_user
+    = check_box_tag :claim_ownership
+    = label_tag 'claim_ownership'
+  = f.button :submit, role: :button
+
+%p
+  If you no longer wish to track this project in QA-fire, you can remove it.
+  This action will remove *all* currently-deployed instances of the application.
+%p
+  = link_to 'Destroy project', project_path(@project), method: :delete, role: :button,
+      data: {confirm: 'Are you sure?'}, style: 'background-color: #920505'

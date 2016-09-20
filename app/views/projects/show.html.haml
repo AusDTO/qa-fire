@@ -6,38 +6,25 @@
   %p
     Owned by: #{@project.user.username}
 
-%h2 Environment
-
-- unless project.environment.nil?
-  %table.content-table
-    %thead
-      %tr
-        %th Key
-        %th Value
-    %tbody
-      - project.environment.keys.each do |key|
-        %tr
-          %td= key
-          %td= project.environment[key]
-
-%details.accordion--controls{"aria-expanded" => false}
-  %summary Edit
-  %div.accordion-panel
-    %p
-      = simple_form_for @project do |f|
-        ~ f.input :environment_raw, label: false, as: :text, input_html: {rows: 8}
-        = f.button :button
-
+= link_to('Edit project', edit_project_path(@project), role: :button)
 
 %h2 Deploys
 
+= link_to 'Create manual deploy', new_project_deploy_path(@project)
+%h3 Managed by people
+
 %ul
-  - project.deploys.each do |deploy|
-    %li= link_to(deploy.full_name, deploy.url)
+  - if @manual_deploys.blank?
+    No deploys created manually
+  - else
+    - manual_deploys.each do |deploy|
+      %li= link_to(deploy.full_name, deploy.url)
 
-%p
-  = link_to 'Create manual deploy', new_project_deploy_path(@project)
+%h3 Managed by GitHub
 
-%p
-  =link_to "Destroy project #{project.repository}", project_path(@project), method: :delete, role: :button,
-        data: {confirm: 'Are you sure?'}
+%ul
+  - if @github_deploys.blank?
+    No deploys from pull requests
+  - else
+    - github_deploys.each do |deploy|
+      %li= link_to(deploy.full_name, deploy.url)

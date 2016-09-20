@@ -1,9 +1,12 @@
 class ProjectsController < ApplicationController
   decorates_assigned :project
-  before_action :get_project, only: [:show, :update, :destroy]
+  decorates_assigned :manual_deploys
+  decorates_assigned :github_deploys
+
+  before_action :get_project, only: [:show, :update, :destroy, :edit]
 
   def index
-    @projects = Project.all
+    @projects = Project.all.order(:repository)
   end
 
   def new
@@ -24,14 +27,25 @@ class ProjectsController < ApplicationController
   end
 
   def update
-    if @project.update(edit_project_params)
+    @project.webhook_secret = params[:project][:webhook_secret]
+    @project.environment_raw = params[:project][:environment_raw]
+
+    # Ensure we have a valid form before re-assigning ownership
+    if @project.save
+      if params[:claim_ownership]
+        if collaborator?(@project.repository)
+          @project.update(user: current_user)
+        end
+      end
+
       redirect_to project_path(@project)
     else
-      render :show
+      render :edit
     end
+
   rescue JSON::ParserError
     flash[:alert] = 'You must input valid JSON'
-    render :show
+    render :edit
   end
 
   def destroy
@@ -41,7 +55,7 @@ class ProjectsController < ApplicationController
 
   private
   def edit_project_params
-    params.required(:project).permit(:environment_raw)
+    params.required(:project).permit(:environment_raw, :webhook_secret)
   end
 
   def new_project_params
@@ -50,8 +64,11 @@ class ProjectsController < ApplicationController
 
   def get_project
     @project = Project.find(params[:id])
+    @manual_deploys = @project.deploys.by_manual
+    @github_deploys = @project.deploys.by_github
   end
 
+  # TODO: pull this out in User.rb
   def collaborator?(repo)
     if Octokit::Client.new(access_token: current_user.github_token).collaborator?(repo, current_user.username)
       return true
@@ -66,5 +83,4 @@ class ProjectsController < ApplicationController
     flash[:alert] = 'Invalid repository name'
     return false
   end
-
 end

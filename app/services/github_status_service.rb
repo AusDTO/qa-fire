@@ -5,7 +5,7 @@ class GithubStatusService
 
   # https://developer.github.com/v3/repos/statuses/
   def perform!
-    if @deploy.user
+    if @deploy.user && @deploy.sha
       github = Octokit::Client.new(access_token: @deploy.user.github_token)
       info = {
           target_url: @deploy.decorate.url,

@@ -13,8 +13,9 @@ class GithubWebhookService
     deploy.trigger = 'github'
     deploy.branch = @payload[:pull_request]['head']['ref']
     deploy.sha = @payload[:pull_request]['head']['sha']
+    deploy.pr = @payload[:number]
     deploy.name = "pr-#{@payload[:number]}"
-    deploy.events += [WebhookPayloadFilterService.new(@payload).filtered_hash]
+    #deploy.events += [WebhookPayloadFilterService.new(@payload).filtered_hash]
     deploy.save
 
     return deploy

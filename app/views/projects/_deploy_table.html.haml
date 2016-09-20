@@ -1,0 +1,18 @@
+-# locals: deploys
+- if deploys.blank?
+  None
+- else
+  %table.content-table
+    %thead
+      %tr
+        %td Name
+        %td Branch
+        %td Deploy URL
+        %td Actions
+    %tbody
+      - deploys.each do |deploy|
+        %tr
+          %td= deploy.full_name
+          %td= deploy.branch
+          %td= link_to('show', deploy.url, rel: :external)
+          %td= yield deploy

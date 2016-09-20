@@ -57,6 +57,7 @@ class Server
     CloudFoundry.login
     CloudFoundry.delete_app(@deploy.full_name)
     CloudFoundry.delete_service(db_service_name)
+    @deploy.delete
   end
 
   def local_dir

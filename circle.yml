@@ -16,25 +16,10 @@ test:
 
 deployment:
   staging:
-    branch: develop
+    branch: master
     owner: AusDTO
     commands:
       - cf api https://api.system.staging.digital.gov.au
       - cf auth $CF_STAGING_USER $CF_STAGING_PASSWORD
       - cf target -o dto -s dtomisc
-      - curl https://api.rollbar.com/api/1/deploy/ -F access_token=$ROLLBAR_ACCESS_TOKEN
-          -F environment=production -F revision=`git log -n 1 --pretty=format:"%H"`
-          -F local_username=`whoami`
-      - ./bin/deploy.sh
-  production:
-    tag: /v.*/
-    owner: AusDTO
-    commands:
-      - cf api $CF_API_PROD
-      - cf auth $CF_USER_PROD $CF_PASSWORD_PROD
-      - cf target -o $CF_ORG_PROD
-      - cf target -s $CF_SPACE_PROD
-      - curl https://api.rollbar.com/api/1/deploy/ -F access_token=$ROLLBAR_PROD_ACCESS_TOKEN
-          -F environment=production -F revision=`git log -n 1 --pretty=format:"%H"`
-          -F local_username=`whoami`
       - ./bin/deploy.sh

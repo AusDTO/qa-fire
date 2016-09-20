@@ -221,6 +221,9 @@ GEM
       rspec-mocks (~> 3.5.0)
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
+    rspec_junit_formatter (0.2.3)
+      builder (< 4)
+      rspec-core (>= 2, < 4, != 2.12.0)
     rubyzip (1.2.0)
     rufus-scheduler (3.2.2)
     safe_yaml (1.0.4)
@@ -323,6 +326,7 @@ DEPENDENCIES
   redis-namespace
   rest-client
   rspec-rails
+  rspec_junit_formatter
   rubyzip
   sass-rails (~> 5.0)
   shoulda-matchers

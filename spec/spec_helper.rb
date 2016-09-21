@@ -16,7 +16,28 @@
 # users commonly want.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+
+require 'simplecov'
+
+# save to CircleCI's artifacts directory if we're on CircleCI
+if ENV['CIRCLE_ARTIFACTS']
+  dir = File.join(ENV['CIRCLE_ARTIFACTS'], 'coverage')
+  SimpleCov.coverage_dir(dir)
+end
+
 RSpec.configure do |config|
+
+  # Avoid overwriting coverage if one is just testing a single spec
+  # Ignore files with no content
+  unless config.files_to_run.one?
+    SimpleCov.start :rails do
+      add_filter do |source_file|
+        source_file.lines.none? {|line| line.src.include?('def')}
+      end
+      add_group 'Services', 'app/services'
+    end
+  end
+
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.

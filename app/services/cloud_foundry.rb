@@ -169,7 +169,7 @@ class CloudFoundry
                             {:resources => [].to_json, :application => File.new(app_zip, 'rb')}, @headers)
     push_job = JSON.parse(result.body)
 
-    while push_job["entity"]["status"] == "queued"
+    while ['queued', 'running'].include?(push_job["entity"]["status"])
       puts("waiting for push to complete")
       sleep(1)
       result = RestClient.get("#{@cf_api}/v2/jobs/"+push_job["entity"]["guid"], @headers)
@@ -180,7 +180,11 @@ class CloudFoundry
 
   def self.start_app(app_name)
     #start app
-    app_guid =find_app(app_name)['resources'][0]['metadata']['guid']
+    app = find_first_app(app_name)
+    if app['entity']['state'] == 'STARTED'
+      stop_app(app_name)
+    end
+    app_guid = app['metadata']['guid']
     result = RestClient.put("#{@cf_api}/v2/apps/#{app_guid}?async=true", {state: "STARTED"}.to_json, @headers)
     puts("start complete for #{app_name}")
   end

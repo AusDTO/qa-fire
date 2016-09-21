@@ -1,14 +1,25 @@
 %h1= @deploy.full_name
 
-%h2 Recent deploy activity
+%h2 QA activity
 
-%table.content-table
+
+
+%h2 Recent CloudFoundry activity
+
+%table.content-table.log-table
   %thead
     %tr
+      %th Type
       %th Message
       %th Timestamp
   %tbody
     - @logs.reverse.each do |log|
-      %tr
+      - row_class = 'error' if log.logMessage.message_type == 2
+      %tr{class: row_class}
+        %td
+          - if log.logMessage.message_type == 1
+            OUT
+          - else
+            %i.fa.fa-exclamation-circle
         %td= log.logMessage.message
         %td #{time_since_timestamp(log.logMessage.timestamp)} ago

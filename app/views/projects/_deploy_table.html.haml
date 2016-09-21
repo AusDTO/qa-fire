@@ -13,7 +13,7 @@
     %tbody
       - deploys.each do |deploy|
         %tr
-          %td= deploy.full_name
+          %td= link_to(deploy.full_name, project_deploy_path(@project, deploy))
           %td= deploy.branch
           %td
             - if deploy.deployed_at

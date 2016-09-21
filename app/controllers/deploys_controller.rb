@@ -30,19 +30,30 @@ class DeploysController < ApplicationController
     redirect_to project_path(@project)
   end
 
+
+  def show
+    @deploy = Deploy.find(params[:id])
+    CloudFoundry.login
+    @logs = CloudFoundry.get_app_logs(@deploy.full_name)
+  end
+
+
   def destroy
     ServerDestroyJob.perform_later(@deploy)
     redirect_to project_path(@project)
   end
+
 
   private
   def set_project
     @project = Project.find(params[:project_id])
   end
 
+
   def set_deploy
     @deploy = Deploy.find(params[:id])
   end
+
 
   def deploy_params
     params.required(:deploy).permit([:name, :branch])

@@ -1,3 +1,11 @@
+require 'log_events/uuid.pb.rb'
+require 'log_events/metric.pb.rb'
+require 'log_events/log.pb.rb'
+require 'log_events/http.pb.rb'
+require 'log_events/error.pb.rb'
+require 'log_events/envelope.pb.rb'
+
+
 class CloudFoundry
   def self.login
     # login
@@ -221,6 +229,36 @@ class CloudFoundry
       cf_app_guid = app['metadata']['guid']
       result = RestClient.get("#{@cf_api}/v2/apps/#{cf_app_guid}/env", @headers)
       JSON.parse(result.body)
+    end
+  end
+
+
+  def self.get_app_logs(app_name)
+    if app = find_first_app(app_name)
+      cf_app_guid = app['metadata']['guid']
+      info = RestClient.get("#{@cf_api}/v2/info")
+      logging_endpoint = JSON.parse(info.body)["doppler_logging_endpoint"].gsub('wss', 'https')
+
+      resp = RestClient::Request.execute(
+        url: "#{logging_endpoint}/apps/#{cf_app_guid}/recentlogs",
+        headers: @headers,
+        method: :get,
+        verify_ssl: OpenSSL::SSL::VERIFY_NONE,
+        raw_response: true
+      )
+
+      boundary = resp.headers[:content_type].match(/(?<=boundary=).*/).to_s
+      file = File.open(resp.file, 'rb')
+      contents = file.read.split("--#{boundary}")
+
+      contents[0..-2].each.inject([]) do |agg, item|
+        unless item.blank?
+          agg << Envelope.decode(Beefcake::Buffer.new(item[4..-3]))
+        end
+
+        agg
+      end
+
     end
   end
 

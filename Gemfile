@@ -50,6 +50,8 @@ gem 'draper', '>= 3.0.0.pre1', '< 4'
 gem 'sidekiq-cron', '~> 0.4.0'
 gem 'aws-sdk', '~> 2.5.0'
 gem 'octokit', '~> 4.0'
+gem 'protobuf'
+gem 'beefcake'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

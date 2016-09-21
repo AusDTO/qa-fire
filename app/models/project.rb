@@ -20,9 +20,13 @@ class Project < ApplicationRecord
 
   def environment_raw=(value)
     @environment_raw = value
-    begin
-      self.environment = JSON.parse(@environment_raw)
-    rescue JSON::ParserError
+    if value.blank?
+      self.environment = {}
+    else
+      begin
+        self.environment = JSON.parse(@environment_raw)
+      rescue JSON::ParserError
+      end
     end
   end
 end

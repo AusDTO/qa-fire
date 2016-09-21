@@ -27,8 +27,7 @@ class ProjectsController < ApplicationController
   end
 
   def update
-    @project.webhook_secret = params[:project][:webhook_secret]
-    @project.environment_raw = params[:project][:environment_raw]
+    @project.assign_attributes(edit_project_params)
 
     # Ensure we have a valid form before re-assigning ownership
     if @project.save
@@ -42,10 +41,6 @@ class ProjectsController < ApplicationController
     else
       render :edit
     end
-
-  rescue JSON::ParserError
-    flash[:alert] = 'You must input valid JSON'
-    render :edit
   end
 
   def destroy
@@ -70,7 +65,7 @@ class ProjectsController < ApplicationController
   end
 
   def new_project_params
-    params.required(:project).permit(:repository, :webhook_secret)
+    params.required(:project).permit(:repository, :environment_raw, :webhook_secret)
   end
 
   def get_project

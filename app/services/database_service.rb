@@ -26,14 +26,14 @@ class DatabaseService
       return
     end
 
-    unless @app_manifest['qafire']['services']['seed']
+    unless @app_manifest['qafire']['services'][0]['seed']
       puts 'no seed information in manifest'
       return
     end
 
-    if @app_manifest['qafire']['services']['seed']['s3']
-      bucket = @app_manifest['qafire']['services']['seed']['s3']['bucket']
-      key = @app_manifest['qafire']['services']['seed']['s3']['key']
+    if @app_manifest['qafire']['services'][0]['seed']['s3']
+      bucket = @app_manifest['qafire']['services'][0]['seed']['s3']['bucket']
+      key = @app_manifest['qafire']['services'][0]['seed']['s3']['key']
 
       unless bucket && key
         puts 'Skipping seeding database - S3 bucket/key missing'

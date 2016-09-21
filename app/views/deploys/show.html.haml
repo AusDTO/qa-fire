@@ -1,0 +1,14 @@
+%h1= @deploy.full_name
+
+%h2 Recent deploy activity
+
+%table.content-table
+  %thead
+    %tr
+      %th Message
+      %th Timestamp
+  %tbody
+    - @logs.reverse.each do |log|
+      %tr
+        %td= log.logMessage.message
+        %td #{time_since_timestamp(log.logMessage.timestamp)} ago

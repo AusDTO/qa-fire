@@ -52,6 +52,7 @@ GEM
     aws-sdk-resources (2.5.11)
       aws-sdk-core (= 2.5.11)
     bcrypt (3.1.11)
+    beefcake (1.2.0)
     builder (3.2.2)
     byebug (9.0.5)
     capybara (2.8.1)
@@ -134,6 +135,7 @@ GEM
     mail (2.6.4)
       mime-types (>= 1.16, < 4)
     method_source (0.8.2)
+    middleware (0.1.0)
     mime-types (3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
@@ -169,6 +171,11 @@ GEM
     orm_adapter (0.5.0)
     pg (0.18.4)
     pkg-config (1.1.7)
+    protobuf (3.6.12)
+      activesupport (>= 3.2)
+      middleware
+      thor
+      thread_safe
     puma (3.6.0)
     rack (2.0.1)
     rack-protection (2.0.0.beta2)
@@ -320,6 +327,7 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk (~> 2.5.0)
+  beefcake
   byebug
   capybara
   cf-app-utils
@@ -339,6 +347,7 @@ DEPENDENCIES
   omniauth-github
   open4
   pg (~> 0.18)
+  protobuf
   puma (~> 3.0)
   rails (~> 5.0.0, >= 5.0.0.1)
   rails-controller-testing

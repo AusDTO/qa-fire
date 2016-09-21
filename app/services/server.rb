@@ -36,6 +36,7 @@ class Server
         puts 'Posting status to github'
         GithubStatusService.new(@deploy).perform!
 
+        @deploy.update(deployed_at: DateTime.now)
         puts 'Done'
       end
     ensure

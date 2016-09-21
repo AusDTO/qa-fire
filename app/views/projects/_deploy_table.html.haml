@@ -7,6 +7,7 @@
       %tr
         %td Name
         %td Branch
+        %td Last deployed
         %td Deploy URL
         %td Actions
     %tbody
@@ -14,5 +15,13 @@
         %tr
           %td= deploy.full_name
           %td= deploy.branch
+          %td
+            - if deploy.deployed_at
+              = time_ago_in_words(deploy.deployed_at)
+              ago
+            - else
+              never
           %td= link_to('show', deploy.url, rel: :external)
-          %td= yield deploy
+          %td
+            = link_to('deploy again', project_deploy_path(deploy.project, deploy), method: :put)
+            = yield deploy

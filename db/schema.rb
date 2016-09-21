@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160920061112) do
+ActiveRecord::Schema.define(version: 20160920231833) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 20160920061112) do
     t.string   "branch"
     t.string   "sha"
     t.integer  "pr"
+    t.datetime "deployed_at"
     t.index ["project_id"], name: "index_deploys_on_project_id", using: :btree
   end
 

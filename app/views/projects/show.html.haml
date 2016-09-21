@@ -19,4 +19,4 @@
 %h3 Managed by GitHub
 
 = render 'deploy_table', deploys: github_deploys do |deploy|
-  = link_to('github', "https://github.com/#{@project.repository}/pulls/#{deploy.pr}", rel: :external)
+  = link_to('github', "https://github.com/#{@project.repository}/pull/#{deploy.pr}", rel: :external)

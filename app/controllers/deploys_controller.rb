@@ -1,7 +1,7 @@
 class DeploysController < ApplicationController
   decorates_assigned :project
-  before_action :set_project, only: [:new, :index, :create, :destroy]
-  before_action :set_deploy, only: [:destroy]
+  before_action :set_project, only: [:new, :index, :create, :update, :destroy]
+  before_action :set_deploy, only: [:update, :destroy]
 
 
   def new
@@ -22,6 +22,12 @@ class DeploysController < ApplicationController
     else
       render :new
     end
+  end
+
+  def update
+    ServerLaunchJob.perform_later(@deploy)
+    flash[:notice] = "Redeploying #{@deploy.full_name}"
+    redirect_to project_path(@project)
   end
 
   def destroy

@@ -243,7 +243,7 @@ class CloudFoundry
         url: "#{logging_endpoint}/apps/#{cf_app_guid}/recentlogs",
         headers: @headers,
         method: :get,
-        verify_ssl: OpenSSL::SSL::VERIFY_NONE,
+        verify_ssl: (logging_endpoint == 'https://doppler.local.pcfdev.io:443' ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER),
         raw_response: true
       )
 

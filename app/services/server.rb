@@ -33,8 +33,10 @@ class Server
 
         CloudFoundry.start_app(@deploy.full_name)
 
-        puts 'Posting status to github'
-        GithubStatusService.new(@deploy).perform!
+        if @deploy.trigger == 'github'
+          puts 'Posting status to github'
+          GithubStatusService.new(@deploy).perform!
+        end
 
         @deploy.update(deployed_at: DateTime.now)
         puts 'Done'

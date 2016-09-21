@@ -27,7 +27,8 @@ RSpec.describe DeploysController, type: :controller do
     end
 
     context 'with invalid params' do
-      pending('implement validations on the deploy model')
+      let(:params) { { name: '$(bad)', branch: 'branch' } }
+      it { expect{request}.not_to change(Deploy, :count) }
     end
   end
 

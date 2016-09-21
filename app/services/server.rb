@@ -11,7 +11,7 @@ class Server
       app_zip = "#{local_dir}/application.zip"
       app_manifest = {application: [{}]}
       # FIXME: Definite santization problems here!
-      Execute.go("git clone https://github.com/#{@repo_full_name}.git #{local_dir} --branch #{@branch} --depth 1 --single-branch")
+      Execute.go("git clone https://github.com/#{@repo_full_name.shellescape}.git #{local_dir.shellescape} --branch #{@branch.shellescape} --depth 1 --single-branch")
       FileUtils.cd(local_dir) do
         zf = ZipFileGenerator.new(local_dir, app_zip)
         zf.write()
@@ -42,7 +42,7 @@ class Server
         puts 'Done'
       end
     ensure
-      FileUtils.remove_entry_secure(local_dir)
+      FileUtils.remove_entry_secure(local_dir) if File.exists?(local_dir)
     end
   end
 

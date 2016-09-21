@@ -1,3 +1,5 @@
+[![Code Climate](https://codeclimate.com/github/AusDTO/qa-fire/badges/gpa.svg)](https://codeclimate.com/github/AusDTO/qa-fire)
+[![Test Coverage](https://codeclimate.com/github/AusDTO/qa-fire/badges/coverage.svg)](https://codeclimate.com/github/AusDTO/qa-fire/coverage)
 [![Stories in Ready](https://badge.waffle.io/AusDTO/qa-fire.png?label=ready&title=Ready)](https://waffle.io/AusDTO/qa-fire)
 # README
 

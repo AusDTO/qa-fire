@@ -1,7 +1,7 @@
 class DeploysController < ApplicationController
   decorates_assigned :project
   before_action :set_project, only: [:new, :index, :create, :update, :destroy]
-  before_action :set_deploy, only: [:update, :destroy]
+  before_action :set_deploy, only: [:update, :show, :destroy]
 
 
   def new
@@ -32,7 +32,6 @@ class DeploysController < ApplicationController
 
 
   def show
-    @deploy = Deploy.find(params[:id])
     CloudFoundry.login
     @logs = CloudFoundry.get_app_logs(@deploy.full_name)
   end

@@ -38,6 +38,14 @@ RSpec.describe DeploysController, type: :controller do
     it { expect{request}.to have_enqueued_job(ServerLaunchJob).with(deploy) }
   end
 
+  describe '#show' do
+    let!(:deploy) { Fabricate(:deploy, project: project) }
+    let(:request) { get :show, params: {project_id: project.id, id: deploy.id} }
+    before {request}
+    it { expect(assigns(:deploy)).to eq(deploy) }
+    it { expect(assigns(:logs)).to be_a(Array) }
+  end
+
   describe '#destroy' do
     let!(:deploy) { Fabricate(:deploy, project: project) }
     let(:request) { delete :destroy, params: {project_id: project.id, id: deploy.id} }

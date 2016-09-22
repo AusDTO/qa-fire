@@ -30,11 +30,6 @@ RSpec.describe ProjectsController, type: :controller do
     context 'with valid params' do
       let(:params) { {repository: 'foo/bar', environment_raw: '{"one":"two"}'} }
 
-      before do
-        stub_request(:get, "https://api.github.com/repos/foo/bar/collaborators/#{user.username}").
-            to_return(:status => 204)
-      end
-
       it { expect{ request }.to change(Project, :count).by(1) }
       it do
         request
@@ -52,29 +47,18 @@ RSpec.describe ProjectsController, type: :controller do
       let(:params) { {repository: 'foo/bar'} }
 
       context 'returning 404' do
-        before do
-          stub_request(:get, "https://api.github.com/repos/foo/bar/collaborators/#{user.username}").
-              to_return(:status => 404)
-        end
+        before { stub_github_collaborators(404) }
         include_examples 'non-collaborator'
       end
 
       context 'returning 403' do
-        before do
-          stub_request(:get, "https://api.github.com/repos/foo/bar/collaborators/#{user.username}").
-              to_return(:status => 403)
-        end
+        before { stub_github_collaborators(403) }
         include_examples 'non-collaborator'
       end
     end
 
     context 'with invalid environment json' do
       let(:params) { {repository: 'foo/bar', environment_raw: 'bad'} }
-
-      before do
-        stub_request(:get, "https://api.github.com/repos/foo/bar/collaborators/#{user.username}").
-            to_return(:status => 204)
-      end
 
       it { expect(request).to render_template(:new) }
     end
@@ -87,21 +71,12 @@ RSpec.describe ProjectsController, type: :controller do
     context 'with valid params' do
       let(:params) { {environment_raw: '{"one":"two"}'} }
 
-      before do
-        stub_request(:get, "https://api.github.com/repos/foo/bar/collaborators/#{user.username}").
-            to_return(:status => 204)
-      end
 
       it { expect{ request; project.reload }.to change(project, :environment).to({'one' => 'two'}) }
     end
 
     context 'with invalid environment json' do
       let(:params) { {environment_raw: 'bad'} }
-
-      before do
-        stub_request(:get, "https://api.github.com/repos/foo/bar/collaborators/#{user.username}").
-            to_return(:status => 204)
-      end
 
       it { expect{request; project.reload}.not_to change(project, :environment) }
       it { expect(request).to render_template(:edit) }
@@ -110,18 +85,11 @@ RSpec.describe ProjectsController, type: :controller do
     context 'claiming ownership' do
       let(:request) { post :update, params: {id: project.id, claim_ownership: true, project: {environment_raw: ''}} }
       context 'with access' do
-        before do
-          stub_request(:get, "https://api.github.com/repos/foo/bar/collaborators/#{user.username}").
-              to_return(:status => 204)
-        end
         it { expect{request; project.reload}.to change(project, :user).to(user) }
       end
 
       context 'without access' do
-        before do
-          stub_request(:get, "https://api.github.com/repos/foo/bar/collaborators/#{user.username}").
-              to_return(:status => 404)
-        end
+        before { stub_github_collaborators(404) }
         it { expect{request; project.reload}.not_to change(project, :user) }
       end
     end

@@ -3,7 +3,7 @@ require 'exceptions'
 class GithubWebhooksController < ApplicationController
   include GithubWebhook::Processor
 
-  if Rails.env.development?
+  unless Rails.env.production?
     skip_before_action :authenticate_github_request!, only: :create
   end
 
@@ -31,10 +31,6 @@ class GithubWebhooksController < ApplicationController
   end
 
   private
-  def server(payload)
-    Server.new(payload[:pull_request])
-  end
-
 
   def get_project(payload)
     if payload.keys.include?('repository') && payload[:repository].keys.include?('full_name')
@@ -43,7 +39,6 @@ class GithubWebhooksController < ApplicationController
       return nil
     end
   end
-
 
   def not_found
     render json: { error: 'Project not found'}.to_json, status: 404 and return

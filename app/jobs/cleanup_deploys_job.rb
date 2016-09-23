@@ -2,21 +2,19 @@ class CleanupDeploysJob < ApplicationJob
   queue_as :default
 
   def perform
-    # Login
-    CloudFoundry.login
-
-    # Ensure Deploy objects exist in cf
-    delete_ids = Deploy.all.inject([]) do |agg, deploy|
-      if CloudFoundry.find_app(deploy.full_name)['total_results'] == 0
-        agg << deploy
+    Project.find_each do |project|
+      if project.user
+        begin
+          github = Octokit::Client.new(access_token: project.user.github_token)
+          prs = github.pull_requests(project.repository, state: :open)
+          pr_ids = prs.map(&:number)
+          project.deploys.where(trigger: 'github').each do |deploy|
+            ServerDestroyJob.perform_later(deploy) unless pr_ids.include?(deploy.pr)
+          end
+        rescue Octokit::Error => e
+          puts e
+        end
       end
-
-      agg
-    end
-
-    # Delete where they don't exist anymore
-    unless delete_ids.empty?
-      Deploy.where(id: delete_ids).delete_all
     end
   end
 end

@@ -6,8 +6,7 @@ RSpec.describe User, type: :model do
     let(:auth) { RecursiveOpenStruct.new(JSON.parse(File.read('spec/resources/github-oauth.json'))) }
     let(:valid_email) { 'valid@digital.gov.au' }
     let(:invalid_email) { 'bad@example.com' }
-    # Fake a github oauth strategy object as we're only using it for the emails
-    let(:strategy) { OpenStruct.new(emails: emails) }
+    let(:strategy) { fake_github_strategy(emails) }
 
     subject { User.from_omniauth(auth, strategy) }
 

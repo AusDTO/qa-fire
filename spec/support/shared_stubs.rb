@@ -15,6 +15,11 @@ module SharedStubs
     stub_request(:get, %r{https://api\.github\.com/repos/foo/bar/collaborators/.+}).
         to_return(:status => status)
   end
+
+  def fake_github_strategy(emails={})
+    strategy = OpenStruct.new(emails: emails)
+
+  end
 end
 
 RSpec.configure do |config|

@@ -1,0 +1,15 @@
+---
+env:
+  RAILS_ENV: production
+services:
+  - 'qafire-redis'
+  - 'qafire-db'
+applications:
+- name: qafire-sidekiq
+  buildpack: https://github.com/bjgordon/ruby-buildpack.git
+  memory: 512M
+  instances: 1
+  path: .
+  no-route: true
+  health-check-type: none
+  command: 'bundle exec sidekiq'

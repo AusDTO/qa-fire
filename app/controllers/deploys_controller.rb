@@ -14,7 +14,6 @@ class DeploysController < ApplicationController
   def create
     @deploy = Deploy.new(deploy_params)
     @deploy.project = @project
-    @deploy.environment = @project.environment
     @deploy.trigger = 'manual'
 
     if @deploy.save

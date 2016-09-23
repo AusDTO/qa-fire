@@ -16,4 +16,18 @@ class Deploy < ApplicationRecord
   def full_name
     "#{name}-#{project.name}"
   end
+
+
+  # Returns a merged hash from deploy, deploy.project and
+  # QA-provided environment variables. To be used to provision
+  # remote app instances
+  def full_environment
+    {
+      QAFIRE_ENVIRONMENT: true
+    }.merge(
+      self.project.environment || {}
+    ).merge(
+      self.environment || {}
+    )
+  end
 end

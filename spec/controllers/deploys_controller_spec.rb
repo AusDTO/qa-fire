@@ -23,7 +23,8 @@ RSpec.describe DeploysController, type: :controller do
         it { expect(Deploy.last.branch).to eq('branch') }
         it { expect(Deploy.last.project).to eq(project) }
         it { expect(Deploy.last.trigger).to eq('manual') }
-        it { expect(Deploy.last.environment).to eq(project.environment) }
+        it { expect(Deploy.last.full_environment.keys).to include(*project.environment.keys) }
+        it { expect(Deploy.last.full_environment.length).to be > 1 }
       end
     end
 
@@ -36,7 +37,21 @@ RSpec.describe DeploysController, type: :controller do
   describe '#update' do
     let!(:deploy) { Fabricate(:deploy, project: project) }
     let(:request) { post :update, params: {project_id: project.id, id: deploy.id} }
-    it { expect{request}.to have_enqueued_job(ServerLaunchJob).with(deploy) }
+
+    context 'with update project environment' do
+      before {
+        project.environment = { new: :environment }
+        project.save
+      }
+
+      it 'should update deploys environment' do
+        request
+        expect(deploy.full_environment.keys).to include(*project.environment.keys)
+      end
+
+      it { expect{request}.to have_enqueued_job(ServerLaunchJob).with(deploy) }
+
+    end
   end
 
   describe '#show' do

@@ -13,13 +13,14 @@
       %th Message
       %th Timestamp
   %tbody
-    - @logs.reverse.each do |log|
-      - row_class = 'error' if log.logMessage.message_type == 2
-      %tr{class: row_class}
-        %td
-          - if log.logMessage.message_type == 1
-            OUT
-          - else
-            %i.fa.fa-exclamation-circle
-        %td= log.logMessage.message
-        %td #{time_since_timestamp(log.logMessage.timestamp)} ago
+    - if @logs
+      - @logs.reverse.each do |log|
+        - row_class = 'error' if log.logMessage.message_type == 2
+        %tr{class: row_class}
+          %td
+            - if log.logMessage.message_type == 1
+              OUT
+            - else
+              %i.fa.fa-exclamation-circle
+          %td= log.logMessage.message
+          %td #{time_since_timestamp(log.logMessage.timestamp)} ago

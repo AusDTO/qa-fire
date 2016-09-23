@@ -17,6 +17,7 @@ class GithubWebhooksController < ApplicationController
       raise Exceptions::InvalidProjectError.new('Project not found')
     else
       deploy = GithubWebhookService.new(project, payload).perform!
+      DeployEventService.new(deploy).webhook_received!
       DeployService.new(deploy, payload[:action]).perform!
     end
   end

@@ -8,6 +8,7 @@ class DeployService
   def perform!
     if deploy_action.keys.include? @action
       deploy_action[@action].perform_later(@deploy)
+      DeployEventService.new(@deploy).async_task_enqueued!(@action)
     end
   end
 

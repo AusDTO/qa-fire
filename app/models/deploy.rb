@@ -1,5 +1,6 @@
 class Deploy < ApplicationRecord
   belongs_to :project
+  has_many :deploy_events
 
   store_accessor :data, :events
   store_accessor :data, :environment

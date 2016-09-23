@@ -22,7 +22,7 @@ class Server
 
       DeployEventService.new(@deploy).created_application_archive!
 
-      app_manifest["env"] = @deploy.environment
+      app_manifest["env"] = @deploy.full_environment
 
       puts "Launching #{@deploy.full_name}"
 

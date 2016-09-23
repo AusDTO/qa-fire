@@ -32,7 +32,7 @@ RSpec.configure do |config|
   unless config.files_to_run.one?
     SimpleCov.start :rails do
       add_filter do |source_file|
-        source_file.lines.none? {|line| line.src.include?('def')}
+        source_file.lines.none? {|line| line.src.match(/\bdef\b/)}
       end
       add_group 'Services', 'app/services'
     end

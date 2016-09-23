@@ -18,7 +18,7 @@
 
 %h2 Recent CloudFoundry activity
 
-- if @logs.empty?
+- if !@logs || @logs.empty?
   None
 - else
   %table.content-table.log-table

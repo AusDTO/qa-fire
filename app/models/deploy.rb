@@ -5,7 +5,7 @@ class Deploy < ApplicationRecord
   store_accessor :data, :events
   store_accessor :data, :environment
 
-  validates :name, format: {with: /\A[\w-]+\Z/}
+  validates :name, format: {with: /\A[\w-]+\Z/}, uniqueness: {scope: :project_id}
   validates :branch, format: {with: /\A\S+\Z/}
 
   delegate :repository, :user, to: :project

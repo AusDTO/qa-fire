@@ -11,6 +11,7 @@ RSpec.describe Deploy, type: :model do
   describe '#name' do
     it { is_expected.to allow_values('good', 'good-things', 'good_things').for(:name) }
     it { is_expected.not_to allow_values('bad things', 'bad/things').for(:name) }
+    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:project_id) }
   end
 
   describe '#branch' do

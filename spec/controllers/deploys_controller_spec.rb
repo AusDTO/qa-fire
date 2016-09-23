@@ -23,6 +23,7 @@ RSpec.describe DeploysController, type: :controller do
         it { expect(Deploy.last.branch).to eq('branch') }
         it { expect(Deploy.last.project).to eq(project) }
         it { expect(Deploy.last.trigger).to eq('manual') }
+        it { expect(Deploy.last.environment).to eq(project.environment) }
       end
     end
 

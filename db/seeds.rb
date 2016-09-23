@@ -6,5 +6,6 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-Project.find_or_create_by(repository: 'maxious/helloworld-html')
-Project.find_or_create_by(repository: 'maxious/helloworld-php')
+# Now that we have the concept of users, Projects cannot be ownerless
+# Project.find_or_create_by(repository: 'maxious/helloworld-html')
+# Project.find_or_create_by(repository: 'maxious/helloworld-php')

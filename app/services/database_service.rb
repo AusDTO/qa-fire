@@ -21,8 +21,11 @@ class DatabaseService
                                 @app_manifest['qafire']['services'][0]['plan'],
                                 @deploy.full_name)
 
+    DeployEventService.new(@deploy).service_created!
+
     unless new_db_service
       puts 'Skipping populating database - service already existed'
+      DeployEventService.new(@deploy).service_already_exists!
       return
     end
 

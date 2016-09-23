@@ -3,5 +3,6 @@ class ServerLaunchJob < ApplicationJob
 
   def perform(deploy)
     Server.new(deploy).launch!
+    DeployEventService.new(deploy).server_launch_complete!
   end
 end

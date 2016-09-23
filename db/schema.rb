@@ -10,10 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160920231833) do
+ActiveRecord::Schema.define(version: 20160922003414) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "deploy_events", force: :cascade do |t|
+    t.datetime "timestamp"
+    t.string   "message"
+    t.integer  "deploy_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deploy_id"], name: "index_deploy_events_on_deploy_id", using: :btree
+  end
 
   create_table "deploys", force: :cascade do |t|
     t.string   "name"
@@ -58,6 +67,7 @@ ActiveRecord::Schema.define(version: 20160920231833) do
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true, using: :btree
   end
 
+  add_foreign_key "deploy_events", "deploys", on_delete: :cascade
   add_foreign_key "deploys", "projects"
   add_foreign_key "projects", "users"
 end

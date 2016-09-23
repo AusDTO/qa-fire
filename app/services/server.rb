@@ -20,6 +20,8 @@ class Server
         end
       end
 
+      DeployEventService.new(@deploy).created_application_archive!
+
       app_manifest["env"] = @deploy.environment
 
       puts "Launching #{@deploy.full_name}"
@@ -27,6 +29,7 @@ class Server
       if CloudFoundry.login
         CloudFoundry.push(@deploy.full_name, app_manifest, app_zip)
 
+        DeployEventService.new(@deploy).application_pushed!
         #set_envs
 
         DatabaseService.new(app_manifest, @deploy).perform!

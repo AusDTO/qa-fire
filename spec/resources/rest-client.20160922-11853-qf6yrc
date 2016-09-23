@@ -1,0 +1,202 @@
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+cloud_controllerBv
+:Created app with guid c4caad2c-0823-4d03-acdd-cfb579f70649≈ºñÕ¥πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*API20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+cloud_controllerB™
+nUpdated app with guid c4caad2c-0823-4d03-acdd-cfb579f70649 ({"route"=>"8ae0208e-36cb-47fa-9053-8723c61a002b"})ã¿ûÙ¥πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*API20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+cloud_controllerBç
+QUpdated app with guid c4caad2c-0823-4d03-acdd-cfb579f70649 ({"state"=>"STARTED"})‘Ñ˝˜¿πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*API20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0ñÖÑ¸¿πêªB_
+#Downloading staticfile_buildpack...ˆ˜É¸¿πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*STG20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0ä†Ë˝¿πêªBN
+Creating container∞öË˝¿πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*STG20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0˘‹·˝¿πêªB[
+Downloaded staticfile_buildpackë—·˝¿πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*STG20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0⁄ïÕ¬¬πêªBV
+Downloading app package...ËçÕ¬¬πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*STG20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0Î°¶¬¬πêªBZ
+Successfully created containerÆö¶¬¬πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*STG20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0ô–›Ã¬πêªBY
+Downloaded app package (583B)ßØ›Ã¬πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*STG20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0ØËÍÃ¬πêªBF
+
+Staging...∏„ÍÃ¬πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*STG20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0ûÀﬁêƒπêªB\
+ -------> Buildpack version 1.3.6ˇΩﬁêƒπêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*STG20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0Ωˇ∏ÂƒπêªBÓ
+±Downloaded [file:///tmp/buildpacks/579dc8ee4c3c634795c22f92d07f07ba/dependencies/https___pivotal-buildpacks.s3.amazonaws.com_concourse-binaries_nginx_nginx-1.9.14-linux-x64.tgz]Çœ∏Âƒπêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*STG20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0ıŸ˜ËƒπêªBe
+)-----> Copying project files into public/ç‘˜Ëƒπêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*STG20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0ƒÉÒËƒπêªBT
+-----> Using root folderÈ©«Ëƒπêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*STG20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0ÃıçÖ≈πêªBS
+-----> Setting up nginxåΩçÖ≈πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*STG20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0¢Ÿ”ä»πêªBP
+Uploading droplet...è–”ä»πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*STG20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0≠íÆä»πêªBI
+Exit status 0È˛≠ä»πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*STG20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0»“¥ä»πêªBL
+Staging completeµ«¥ä»πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*STG20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0Ë∫∑ä»πêªBg
++Uploading droplet, build artifacts cache...Æµ∑ä»πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*STG20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0Íü¬ä»πêªB^
+"Uploading build artifacts cache...Ôï¬ä»πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*STG20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0ˆû‹ø»πêªBa
+%Uploaded build artifacts cache (108B)Øî‹ø»πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*STG20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0òÅ¶„”πêªBS
+Uploaded droplet (2.5M)»ˆ•„”πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*STG20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0‘©∆„”πêªBN
+Uploading completeÌ¢∆„”πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*STG20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0À€Åª‘πêªBO
+Creating containerÄÕÅª‘πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*CELL20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0⁄∏¶¸÷πêªB[
+Successfully created container«´¶¸÷πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*CELL20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0ÕÂ»Â◊πêªBd
+'Starting health monitoring of containerÌ›»Â◊πêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*CELL20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0Åè∏‹ŸπêªBU
+Container became healthyÂÑ∏‹Ÿπêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*CELL20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+gorouter0‰Öè‹°ÍêªBÔ
+≤demo-helloworld-html.local.pcfdev.io - [21/09/2016:06:39:07.933 +0000] "GET / HTTP/1.1" 200 0 13 "http://localhost:3000/6" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36" 192.168.11.1:57183 x_forwarded_for:"-" x_forwarded_proto:"http" vcap_request_id:505a83e9-5348-4e21-4cdb-9ee845c0d398 response_time:0.004486875 app_id:c4caad2c-0823-4d03-acdd-cfb579f70649
+éıé‹°Íêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*RTR20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0˘öæ‹°ÍêªBô
+]192.168.11.1 - http://localhost:3000/6 - [21/Sep/2016:06:39:07 +0000] "GET / HTTP/1.1" 200 13øäæ‹°Íêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*APP20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+gorouter0‘íªÁ¢ÍêªBê
+”demo-helloworld-html.local.pcfdev.io - [21/09/2016:06:39:08.229 +0000] "GET /favicon.ico HTTP/1.1" 404 0 564 "http://demo-helloworld-html.local.pcfdev.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36" 192.168.11.1:57183 x_forwarded_for:"-" x_forwarded_proto:"http" vcap_request_id:887e7fcb-49bd-47ff-54ce-34a57400dd60 response_time:0.001072235 app_id:c4caad2c-0823-4d03-acdd-cfb579f70649
+ËàªÁ¢Íêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*RTR20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0©¥öÈ¢ÍêªB∫
+~192.168.11.1 - http://demo-helloworld-html.local.pcfdev.io/ - [21/Sep/2016:06:39:08 +0000] "GET /favicon.ico HTTP/1.1" 404 564ö¢öÈ¢Íêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*APP20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0ó¨çË¢ÍêªBÁ
+™2016/09/21 06:39:08 [error] 36#0: *58 open() "/home/vcap/app/public/favicon.ico" failed (2: No such file or directory), client: 10.0.2.15, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "demo-helloworld-html.local.pcfdev.io", referrer: "http://demo-helloworld-html.local.pcfdev.io/"õâçË¢Íêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*APP20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+gorouter0¿≠Ì—µÌêªBÓ
+±demo-helloworld-html.local.pcfdev.io - [21/09/2016:06:40:56.363 +0000] "GET / HTTP/1.1" 304 0 0 "http://localhost:3000/6" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36" 192.168.11.1:57183 x_forwarded_for:"-" x_forwarded_proto:"http" vcap_request_id:7b879e83-77bd-41b9-469c-3b6670be7004 response_time:0.000738899 app_id:c4caad2c-0823-4d03-acdd-cfb579f70649
+ÀßÌ—µÌêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*RTR20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0¥Äó“µÌêªBò
+\192.168.11.1 - http://localhost:3000/6 - [21/Sep/2016:06:40:56 +0000] "GET / HTTP/1.1" 304 0ÏÛñ“µÌêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*APP20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+gorouter0 Ìõ˛ÂÌêªBÊ
+©demo-helloworld-html.local.pcfdev.io - [21/09/2016:06:41:09.341 +0000] "GET /%3Cb%3Ehello HTTP/1.1" 404 0 564 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36" 192.168.11.1:57183 x_forwarded_for:"-" x_forwarded_proto:"http" vcap_request_id:b8c80244-6c51-4b2b-55bc-441476b87ba9 response_time:0.001152963 app_id:c4caad2c-0823-4d03-acdd-cfb579f70649
+ÿ„õ˛ÂÌêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*RTR20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0ÏäŸˇÂÌêªB´
+Ó2016/09/21 06:41:09 [error] 36#0: *64 open() "/home/vcap/app/public/<b>hello" failed (2: No such file or directory), client: 10.0.2.15, server: localhost, request: "GET /%3Cb%3Ehello HTTP/1.1", host: "demo-helloworld-html.local.pcfdev.io"ê˚ÿˇÂÌêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*APP20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0Œ°˝ˇÂÌêªBê
+T192.168.11.1 - - - [21/Sep/2016:06:41:09 +0000] "GET /%3Cb%3Ehello HTTP/1.1" 404 564Âî˝ˇÂÌêª"$c4caad2c-0823-4d03-acdd-cfb579f70649*APP20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+gorouter0ΩÃ®ßçäûªBÿ
+õdemo-helloworld-html.local.pcfdev.io - [21/09/2016:22:50:16.573 +0000] "GET / HTTP/1.1" 304 0 0 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36" 192.168.11.1:59097 x_forwarded_for:"-" x_forwarded_proto:"http" vcap_request_id:a676d5f8-b39e-4cd4-44d9-f3fe1f8b19a9 response_time:0.000922426 app_id:c4caad2c-0823-4d03-acdd-cfb579f70649
+Ÿ∫®ßçäûª"$c4caad2c-0823-4d03-acdd-cfb579f70649*RTR20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be
+
+
+rep0Ä†´©çäûªBÇ
+F192.168.11.1 - - - [21/Sep/2016:22:50:16 +0000] "GET / HTTP/1.1" 304 0˙é´©çäûª"$c4caad2c-0823-4d03-acdd-cfb579f70649*APP20jpcfdevrpcfdevz0Ç	10.0.2.15
+--1a5941535817666f7a17c8ac01b59aabd74a8aa30c67cde673b01732d3be--

@@ -29,6 +29,7 @@ class ProjectsController < ApplicationController
   def update
     @project.assign_attributes(edit_project_params)
 
+
     # Ensure we have a valid form before re-assigning ownership
     if @project.save
       if params[:claim_ownership]

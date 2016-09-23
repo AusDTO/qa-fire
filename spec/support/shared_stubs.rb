@@ -16,9 +16,14 @@ module SharedStubs
         to_return(:status => status)
   end
 
-  def fake_github_strategy(emails={})
-    strategy = OpenStruct.new(emails: emails)
+  # stub as much of the github result as required
+  def stub_github_pulls(open=[])
+    stub_request(:get, %r{https://api\.github\.com/repos/\S*/\S*/pulls}).
+        to_return(body: open.map{|id| {number: id}}.to_json, headers: {'Content-Type'=> 'application/json'})
+  end
 
+  def fake_github_strategy(emails={})
+    OpenStruct.new(emails: emails)
   end
 end
 

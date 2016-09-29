@@ -24,7 +24,7 @@ class Deploy < ApplicationRecord
     @environment_raw = value
 
     if value.blank?
-      self.value = {}
+      self.environment = {}
     else
       begin
         self.environment = JSON.parse(@environment_raw)

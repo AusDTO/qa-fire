@@ -121,9 +121,7 @@ GITHUB_CLIENT_SECRET=
 
 ## Limitations
 
-* doesn't handle updates to the PR yet
 * would be nice if it updated the PR with a comment containing the URL
 * would be great to do a LGTM style check for QAPASS or something
 * doesn't handle auth to CF yet! (https://github.com/cloudfoundry/omniauth-uaa-oauth2 ?)
 * env vars must be set on QA fire (we can't copy vars from apps or read from a DB at this point)
-* uses a seperate manifest-qa.yml rather than environments 

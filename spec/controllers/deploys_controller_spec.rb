@@ -36,9 +36,10 @@ RSpec.describe DeploysController, type: :controller do
 
   describe '#update' do
     let!(:deploy) { Fabricate(:deploy, project: project) }
-    let(:request) { post :update, params: {project_id: project.id, id: deploy.id} }
 
     context 'with update project environment' do
+      let(:request) { post :update, params: {project_id: project.id, id: deploy.id} }
+
       before {
         project.environment = { new: :environment }
         project.save
@@ -50,7 +51,33 @@ RSpec.describe DeploysController, type: :controller do
       end
 
       it { expect{request}.to have_enqueued_job(ServerLaunchJob).with(deploy) }
+    end
 
+
+    context 'with updated deploy environment' do
+      let(:request) {
+        put :update, params: {
+          project_id: project.id,
+          id: deploy.id,
+          deploy: { environment_raw: '{"new": "foobar"}' }
+        }
+      }
+
+
+      it 'should update deploys environment' do
+        request
+        expect(Deploy.find(deploy.id).full_environment['new']).to eq('foobar')
+      end
+
+
+      it 'should redirect to project' do
+        expect(request).to redirect_to project_path project.id
+      end
+
+
+      it 'should queue a deploy' do
+        expect { request }.to have_enqueued_job(ServerLaunchJob).with(deploy)
+      end
     end
   end
 

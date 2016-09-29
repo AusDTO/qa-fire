@@ -1,7 +1,8 @@
 class DeploysController < ApplicationController
+  before_action :set_project, only: [:new, :edit, :index, :create, :destroy]
+  before_action :set_deploy, only: [:update, :show, :destroy, :edit]
   decorates_assigned :project
-  before_action :set_project, only: [:new, :index, :create, :update, :destroy]
-  before_action :set_deploy, only: [:update, :show, :destroy]
+  decorates_assigned :deploy
 
 
   def new
@@ -25,9 +26,21 @@ class DeploysController < ApplicationController
   end
 
   def update
+    if params.include? :deploy
+      unless params[:deploy][:environment_raw].nil?
+        @deploy.update_attributes(
+          { environment_raw: params[:deploy][:environment_raw] }
+        )
+
+        if !@deploy.save
+          render :edit and return
+        end
+      end
+    end
+
     ServerLaunchJob.perform_later(@deploy)
     flash[:notice] = "Redeploying #{@deploy.full_name}"
-    redirect_to project_path(@project)
+    redirect_to project_path(@deploy.project)
   end
 
 
@@ -55,6 +68,6 @@ class DeploysController < ApplicationController
 
 
   def deploy_params
-    params.required(:deploy).permit([:name, :branch])
+    params.required(:deploy).permit([:name, :branch, :environment_raw])
   end
 end

@@ -1,0 +1,7 @@
+- breadcrumb :edit_deploy, @deploy
+
+%h1= @deploy.full_name
+
+= simple_form_for @deploy, url: project_deploy_path(@project, @deploy), html: {method: :put} do |f|
+  ~ f.input :environment_raw, as: :text, input_html: {rows: 8}
+  = f.button :button

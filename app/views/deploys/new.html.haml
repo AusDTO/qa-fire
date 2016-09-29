@@ -1,9 +1,9 @@
 %h1 New manual deploy
 
 
-
 = simple_form_for @deploy, url: project_deploys_path(@project.id) do |f|
   = f.input :project_id, as: :hidden
-  = f.input :name
-  = f.input :branch
+  = f.input :name, required: true
+  = f.input :branch, required: true
+  ~ f.input :environment_raw, as: :text, input_html: {rows: 8}, required: false
   = f.button :submit, role: :button

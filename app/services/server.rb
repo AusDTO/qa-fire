@@ -6,13 +6,15 @@ class Server
   end
 
   def launch!
-    begin
+    Dir.mktmpdir do |local_dir|
       puts "cloning git and creating application archive"
       app_zip = "#{local_dir}/application.zip"
       app_manifest = {application: [{}]}
-      # FIXME: Definite santization problems here!
-      Execute.go("git clone https://github.com/#{@repo_full_name.shellescape}.git #{local_dir.shellescape} --branch #{@branch.shellescape} --depth 1 --single-branch")
       FileUtils.cd(local_dir) do
+        # FIXME: Definite santization problems here!
+        Execute.go("git init")
+        Execute.go("git checkout -b #{@branch.shellescape}")
+        Execute.go("git pull https://#{@deploy.project.user.github_token.shellescape}@github.com/#{@repo_full_name.shellescape}.git --depth 1")
         zf = ZipFileGenerator.new(local_dir, app_zip)
         zf.write()
         if File.exist?("manifest.yml")
@@ -44,8 +46,6 @@ class Server
         @deploy.update(deployed_at: DateTime.now)
         puts 'Done'
       end
-    ensure
-      FileUtils.remove_entry_secure(local_dir) if File.exists?(local_dir)
     end
   end
 
@@ -57,10 +57,6 @@ class Server
     CloudFoundry.login
     CloudFoundry.delete_app(@deploy.full_name)
     CloudFoundry.delete_service(db_service_name)
-  end
-
-  def local_dir
-    "#{Dir.tmpdir}/tmp/#{@deploy.full_name}"
   end
 
   #TODO: DRY

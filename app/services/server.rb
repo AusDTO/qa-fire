@@ -13,8 +13,7 @@ class Server
       FileUtils.cd(local_dir) do
         # FIXME: Definite santization problems here!
         Execute.go("git init")
-        Execute.go("git checkout -b #{@branch.shellescape}")
-        Execute.go("git pull https://#{@deploy.project.user.github_token.shellescape}@github.com/#{@repo_full_name.shellescape}.git --depth 1")
+        Execute.go("git pull https://#{@deploy.project.user.github_token.shellescape}@github.com/#{@repo_full_name.shellescape}.git #{@branch.shellescape} --depth 1")
         zf = ZipFileGenerator.new(local_dir, app_zip)
         zf.write()
         if File.exist?("manifest.yml")

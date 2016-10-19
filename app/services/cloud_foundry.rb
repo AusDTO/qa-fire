@@ -138,6 +138,13 @@ class CloudFoundry
             app["memory"] = app["memory"].to_i
           end
         end
+        if app["disk_quota"]
+          if app["disk_quota"] =~ /\d+G/i
+            app["disk_quota"] = app["disk_quota"].to_i * 1024
+          else
+            app["disk_quota"] = app["disk_quota"].to_i
+          end
+        end
         app["name"] = app_name
       end
       if app_manifest["env"]
@@ -146,6 +153,9 @@ class CloudFoundry
       if app_manifest["qafire"]
         if app_manifest["qafire"]["command"]
           app["command"] = app_manifest["qafire"]["command"]
+        end
+        if app_manifest["qafire"]["buildpack"]
+          app["buildpack"] = app_manifest["qafire"]["buildpack"]
         end
         if %w(none process).include? app_manifest["qafire"]["health_check_type"]
           app["health_check_type"] = "process"

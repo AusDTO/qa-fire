@@ -132,7 +132,7 @@ class CloudFoundry
       if app_manifest["applications"][0]
         app.merge!(app_manifest["applications"][0])
         if app["memory"]
-          if app["memory"].downcase.includes('G')
+          if app["memory"] =~ /\d+G/i
             app["memory"] = app["memory"].to_i * 1024
           else
             app["memory"] = app["memory"].to_i

@@ -158,7 +158,7 @@ class CloudFoundry
           app["buildpack"] = app_manifest["qafire"]["buildpack"]
         end
         if %w(none process).include? app_manifest["qafire"]["health_check_type"]
-          app["health_check_type"] = "process"
+          app["health_check_type"] = "none"
         end
       end
       result = RestClient.post("#{@cf_api}/v2/apps",

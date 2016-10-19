@@ -77,7 +77,7 @@ RSpec.describe CloudFoundry, type: :service do
 
     context 'health check disabled' do
       let(:manifest_health_check) { 'none' }
-      let(:requested_health_check) { 'process' }
+      let(:requested_health_check) { 'none' }
 
       context '200 megabytes' do
         let(:manifest_memory) { '200' }

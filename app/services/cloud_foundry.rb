@@ -143,8 +143,13 @@ class CloudFoundry
       if app_manifest["env"]
         app["environment_json"] = app_manifest["env"]
       end
-      if app_manifest["qafire"] && app_manifest["qafire"]["command"]
-        app["command"] = app_manifest["qafire"]["command"]
+      if app_manifest["qafire"]
+        if app_manifest["qafire"]["command"]
+          app["command"] = app_manifest["qafire"]["command"]
+        end
+        if %w(none process).include? app_manifest["qafire"]["health_check_type"]
+          app["health_check_type"] = "process"
+        end
       end
       result = RestClient.post("#{@cf_api}/v2/apps",
                                app.to_json, @headers)

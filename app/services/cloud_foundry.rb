@@ -121,55 +121,73 @@ class CloudFoundry
     find_app(app_name)['resources'][0]
   end
 
+  def self.to_megabytes(i)
+    return (i =~ /\d+G/i) ? i.to_i * 1024 : i.to_i
+  end
+
+  def self.generate_app(app_name, app_manifest)
+    #load values from manifest.yml including memory, buildpack and environment_json envvars
+    app = {name: app_name, space_guid: @space_guid}
+    if app_manifest["applications"][0]
+      app.merge!(app_manifest["applications"][0])
+      if app["memory"]
+        app["memory"] = to_megabytes(app["memory"])
+      end
+      if app["disk_quota"]
+        app["disk_quota"] = to_megabytes(app["memory"])
+      end
+      app["name"] = app_name
+    end
+    if app_manifest["env"]
+      app["environment_json"] = app_manifest["env"]
+    end
+    if app_manifest["qafire"]
+      if app_manifest["qafire"]["command"]
+        app["command"] = app_manifest["qafire"]["command"]
+      end
+      if app_manifest["qafire"]["instances"]
+        app["instances"] = app_manifest["qafire"]["instances"]
+      end
+      if app_manifest["qafire"]["buildpack"]
+        app["buildpack"] = app_manifest["qafire"]["buildpack"]
+      end
+      if app_manifest["qafire"]["memory"]
+        app["qafire"]["memory"] = to_megabytes(app_manifest["qafire"]["memory"])
+      end
+      if app_manifest["qafire"]["disk_quota"]
+        app["qafire"]["disk_quota"] = to_megabytes(app_manifest["qafire"]["memory"])
+      end
+
+      if %w(none process).include? app_manifest["qafire"]["health_check_type"]
+        app["health_check_type"] = "none"
+      end
+    end
+    app
+  end
+
   def self.push(app_name, app_manifest, app_zip)
-    #RestClient.proxy = "http://localhost:8888"
+
 
     # create app if does not exist
     existing_apps = find_app(app_name)
-    if existing_apps["resources"].empty?
-      #TODO load values from manifest.yml including memory, buildpack and environment_json envvars
-      app = {name: app_name, space_guid: @space_guid}
-      if app_manifest["applications"][0]
-        app.merge!(app_manifest["applications"][0])
-        if app["memory"]
-          if app["memory"] =~ /\d+G/i
-            app["memory"] = app["memory"].to_i * 1024
-          else
-            app["memory"] = app["memory"].to_i
-          end
-        end
-        if app["disk_quota"]
-          if app["disk_quota"] =~ /\d+G/i
-            app["disk_quota"] = app["disk_quota"].to_i * 1024
-          else
-            app["disk_quota"] = app["disk_quota"].to_i
-          end
-        end
-        app["name"] = app_name
+    app = self.generate_app(app_name, app_manifest)
+    begin
+      if existing_apps["resources"].empty?
+        result = RestClient.post("#{@cf_api}/v2/apps",
+                                 app.to_json, @headers)
+        new_app = JSON.parse(result.body)
+        app_guid = new_app["metadata"]["guid"]
+        puts "created new app #{app_guid}"
+      else
+        puts "found existing app #{app_guid}"
+        app_guid = existing_apps['resources'][0]['metadata']['guid']
+        #update an app with envvars etc. http://apidocs.cloudfoundry.org/241/apps/updating_an_app.html
+        #RestClient.proxy = "http://localhost:8888"
+        RestClient.put("#{@cf_api}/v2/apps/#{app_guid}", app.to_json, @headers)
       end
-      if app_manifest["env"]
-        app["environment_json"] = app_manifest["env"]
-      end
-      if app_manifest["qafire"]
-        if app_manifest["qafire"]["command"]
-          app["command"] = app_manifest["qafire"]["command"]
-        end
-        if app_manifest["qafire"]["buildpack"]
-          app["buildpack"] = app_manifest["qafire"]["buildpack"]
-        end
-        if %w(none process).include? app_manifest["qafire"]["health_check_type"]
-          app["health_check_type"] = "none"
-        end
-      end
-      result = RestClient.post("#{@cf_api}/v2/apps",
-                               app.to_json, @headers)
-      new_app = JSON.parse(result.body)
-      app_guid = new_app["metadata"]["guid"]
-      puts "created new app #{app_guid}"
-    else
-      puts "found existing app #{app_guid}"
-      app_guid = existing_apps['resources'][0]['metadata']['guid']
-      #TODO update an app with envvars etc. http://apidocs.cloudfoundry.org/241/apps/updating_an_app.html
+    rescue RestClient::ExceptionWithResponse => err
+      puts err.response
+      raise
     end
 
     # find a domain name to use for app route
@@ -262,11 +280,11 @@ class CloudFoundry
       logging_endpoint = JSON.parse(info.body)["doppler_logging_endpoint"].gsub('wss', 'https')
 
       resp = RestClient::Request.execute(
-        url: "#{logging_endpoint}/apps/#{cf_app_guid}/recentlogs",
-        headers: @headers,
-        method: :get,
-        verify_ssl: (logging_endpoint == 'https://doppler.local.pcfdev.io:443' ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER),
-        raw_response: true
+          url: "#{logging_endpoint}/apps/#{cf_app_guid}/recentlogs",
+          headers: @headers,
+          method: :get,
+          verify_ssl: (logging_endpoint == 'https://doppler.local.pcfdev.io:443' ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER),
+          raw_response: true
       )
 
       boundary = resp.headers[:content_type].match(/(?<=boundary=).*/).to_s

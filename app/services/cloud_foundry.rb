@@ -122,7 +122,7 @@ class CloudFoundry
   end
 
   def self.to_megabytes(i)
-    return (i =~ /\d+G/i) ? i.to_i * 1024 : i.to_i
+    return (i =~ /\d+G/i) ? (i.to_i * 1024) : i.to_i
   end
 
   def self.generate_app(app_name, app_manifest)
@@ -152,10 +152,10 @@ class CloudFoundry
         app["buildpack"] = app_manifest["qafire"]["buildpack"]
       end
       if app_manifest["qafire"]["memory"]
-        app["qafire"]["memory"] = to_megabytes(app_manifest["qafire"]["memory"])
+        app["memory"] = to_megabytes(app_manifest["qafire"]["memory"])
       end
       if app_manifest["qafire"]["disk_quota"]
-        app["qafire"]["disk_quota"] = to_megabytes(app_manifest["qafire"]["memory"])
+        app["disk_quota"] = to_megabytes(app_manifest["qafire"]["memory"])
       end
 
       if %w(none process).include? app_manifest["qafire"]["health_check_type"]

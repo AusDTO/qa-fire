@@ -153,13 +153,13 @@ class CloudFoundry
       end
 
       if app_manifest["qafire"]["deploy_memory"]
-        app["memory"] = to_megabytes(app_manifest["qafire"]["memory"])
+        app["memory"] = to_megabytes(app_manifest["qafire"]["deploy_memory"])
       elsif app_manifest["qafire"]["memory"]
         app["memory"] = to_megabytes(app_manifest["qafire"]["memory"])
       end
 
       if app_manifest["qafire"]["disk_quota"]
-        app["disk_quota"] = to_megabytes(app_manifest["qafire"]["memory"])
+        app["disk_quota"] = to_megabytes(app_manifest["qafire"]["disk_quota"])
       end
 
       if %w(none process).include? app_manifest["qafire"]["health_check_type"]

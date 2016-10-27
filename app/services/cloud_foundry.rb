@@ -134,7 +134,7 @@ class CloudFoundry
         app["memory"] = to_megabytes(app["memory"])
       end
       if app["disk_quota"]
-        app["disk_quota"] = to_megabytes(app["memory"])
+        app["disk_quota"] = to_megabytes(app["disk_quota"])
       end
       app["name"] = app_name
     end
@@ -151,11 +151,15 @@ class CloudFoundry
       if app_manifest["qafire"]["buildpack"]
         app["buildpack"] = app_manifest["qafire"]["buildpack"]
       end
-      if app_manifest["qafire"]["memory"]
+
+      if app_manifest["qafire"]["deploy_memory"]
+        app["memory"] = to_megabytes(app_manifest["qafire"]["deploy_memory"])
+      elsif app_manifest["qafire"]["memory"]
         app["memory"] = to_megabytes(app_manifest["qafire"]["memory"])
       end
+
       if app_manifest["qafire"]["disk_quota"]
-        app["disk_quota"] = to_megabytes(app_manifest["qafire"]["memory"])
+        app["disk_quota"] = to_megabytes(app_manifest["qafire"]["disk_quota"])
       end
 
       if %w(none process).include? app_manifest["qafire"]["health_check_type"]
@@ -226,15 +230,19 @@ class CloudFoundry
     puts("push complete for #{app_name}")
   end
 
-  def self.start_app(app_name)
+  def self.start_app(app_name, memory = nil)
     #start app
     app = find_first_app(app_name)
     if app['entity']['state'] == 'STARTED'
       stop_app(app_name)
     end
     app_guid = app['metadata']['guid']
-    result = RestClient.put("#{@cf_api}/v2/apps/#{app_guid}?async=true", {state: "STARTED"}.to_json, @headers)
-    puts("start complete for #{app_name}")
+
+    params = { state: 'STARTED' }
+    params[:memory] = to_megabytes(memory) if memory.present?
+
+    result = RestClient.put("#{@cf_api}/v2/apps/#{app_guid}?async=true", params.to_json, @headers)
+    puts("start complete for #{app_name} with params #{params.as_json}")
   end
 
   def self.stop_app(app_name)

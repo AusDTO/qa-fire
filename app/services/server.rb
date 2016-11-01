@@ -35,11 +35,12 @@ class Server
 
         DatabaseService.new(app_manifest, @deploy).perform!
 
-        CloudFoundry.start_app(@deploy.full_name, app_manifest.dig('qafire', 'memory'))
+        CloudFoundry.start_app(@deploy.full_name)
+        deploy_success = CloudFoundry.wait_for_deploy_status @deploy
 
         if @deploy.trigger == 'github'
           puts 'Posting status to github'
-          GithubStatusService.new(@deploy).perform!
+          GithubStatusService.new(@deploy, deploy_success).perform!
         end
 
         @deploy.update(deployed_at: DateTime.now)

@@ -7,6 +7,8 @@ require 'log_events/envelope.pb.rb'
 
 
 class CloudFoundry
+  DEPLOY_STATUS_TIMEOUT = 15.minutes
+
   def self.login
     # login
     cf_user = ENV['CF_USERNAME']
@@ -152,9 +154,7 @@ class CloudFoundry
         app["buildpack"] = app_manifest["qafire"]["buildpack"]
       end
 
-      if app_manifest["qafire"]["deploy_memory"]
-        app["memory"] = to_megabytes(app_manifest["qafire"]["deploy_memory"])
-      elsif app_manifest["qafire"]["memory"]
+      if app_manifest["qafire"]["memory"]
         app["memory"] = to_megabytes(app_manifest["qafire"]["memory"])
       end
 
@@ -164,6 +164,13 @@ class CloudFoundry
 
       if %w(none process).include? app_manifest["qafire"]["health_check_type"]
         app["health_check_type"] = "none"
+      end
+      if app_manifest["qafire"]["env"] # QA Fire specific env vars
+        if app["environment_json"]
+          app["environment_json"].merge! app_manifest["qafire"]["env"]
+        else
+          app["environment_json"] = app_manifest["qafire"]["env"]
+        end
       end
     end
     app
@@ -230,7 +237,7 @@ class CloudFoundry
     puts("push complete for #{app_name}")
   end
 
-  def self.start_app(app_name, memory = nil)
+  def self.start_app(app_name)
     #start app
     app = find_first_app(app_name)
     if app['entity']['state'] == 'STARTED'
@@ -238,11 +245,28 @@ class CloudFoundry
     end
     app_guid = app['metadata']['guid']
 
-    params = { state: 'STARTED' }
-    params[:memory] = to_megabytes(memory) if memory.present?
+    result = RestClient.put("#{@cf_api}/v2/apps/#{app_guid}?async=true", { state: 'STARTED' }.to_json, @headers)
+    puts("start complete for #{app_name}")
+  end
 
-    result = RestClient.put("#{@cf_api}/v2/apps/#{app_guid}?async=true", params.to_json, @headers)
-    puts("start complete for #{app_name} with params #{params.as_json}")
+  def self.wait_for_deploy_status(deploy)
+    start = Time.now.to_i
+    host = "#{deploy.full_name}.#{Rails.configuration.deploy_base_url}"
+
+    while Time.now.to_i - start < DEPLOY_STATUS_TIMEOUT
+      code = Net::HTTP.start(host, 80) {|http| http.head('/').code }
+
+      if [200, 301].include? code.to_i # 301 if site redirects e.g. for https
+        puts "Server responded with #{code}, continuing"
+        return true
+      end
+
+      puts "Server responded with #{code}, waiting..."
+      sleep 10
+    end
+
+    puts "Server deploy timed out :("
+    false
   end
 
   def self.stop_app(app_name)

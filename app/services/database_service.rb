@@ -10,16 +10,16 @@ class DatabaseService
       return
     end
 
-    client = CloudFoundry.new
-    current_db_service = client.find_service_instance(db_service_name)
+    cf = CloudFoundry.new
+    current_db_service = cf.find_service_instance(db_service_name)
 
     #TODO handle multiple services
 
     #TODO could refactor create_service so it works better with this service
-    client.create_service(db_service_name,
-                          @app_manifest['qafire']['services'][0]['type'],
-                          @app_manifest['qafire']['services'][0]['plan'],
-                          @deploy.full_name)
+    cf.create_service(db_service_name,
+                      @app_manifest['qafire']['services'][0]['type'],
+                      @app_manifest['qafire']['services'][0]['plan'],
+                      @deploy.full_name)
 
     DeployEventService.new(@deploy).service_created!
 
@@ -47,7 +47,7 @@ class DatabaseService
       Tempfile.open(['downloaded', '.sql']) do |file|
         puts "Downloading '#{key}' from S3..."
         s3_client.get_object(response_target: file.path, bucket: bucket, key: key)
-        restore(client, file.path)
+        restore(cf, file.path)
         puts 'Restore from s3 complete'
       end
     else
@@ -57,13 +57,13 @@ class DatabaseService
 
   private
 
-  def restore(client, path)
+  def restore(cf, path)
     if type.include?('postgres') || type.include?('pgsql')
       puts 'Running postgres restore...'
-      unless system "psql #{database_url(client)} < #{path}"
+      unless system "psql #{database_url(cf)} < #{path}"
         raise 'Postgres database restore failed'
       end
-      unless system "psql #{database_url(client)} -c 'ANALYZE'"
+      unless system "psql #{database_url(cf)} -c 'ANALYZE'"
         puts 'WARNING: Postgres analyze failed'
       end
     else
@@ -71,8 +71,8 @@ class DatabaseService
     end
   end
 
-  def database_url(client)
-    client.app_env(@deploy.full_name)[:system_env_json][:VCAP_SERVICES][type.to_s][0][:credentials][:uri]
+  def database_url(cf)
+    cf.app_env(@deploy.full_name)[:system_env_json][:VCAP_SERVICES][type.to_s][0][:credentials][:uri]
   end
 
   def aws_creds

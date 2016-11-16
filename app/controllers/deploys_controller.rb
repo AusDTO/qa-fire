@@ -45,8 +45,8 @@ class DeploysController < ApplicationController
 
 
   def show
-    client = CloudFoundry.new
-    @logs = client.get_app_logs(@deploy.full_name)
+    cf = CloudFoundry.new
+    @logs = cf.get_app_logs(@deploy.full_name)
   end
 
 

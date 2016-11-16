@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/ausdto/cfoundry_client
+  revision: 01a8851f407c2fc524429ca6a1a5284a01885d64
+  specs:
+    cfoundry_client (0.0.0)
+      beefcake
+      rest-client
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -331,6 +339,7 @@ DEPENDENCIES
   byebug
   capybara
   cf-app-utils
+  cfoundry_client!
   coffee-rails (~> 4.2)
   devise
   dotenv-rails
@@ -376,4 +385,4 @@ RUBY VERSION
    ruby 2.3.1p112
 
 BUNDLED WITH
-   1.12.5
+   1.13.2

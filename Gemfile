@@ -52,6 +52,7 @@ gem 'aws-sdk', '~> 2.5.0'
 gem 'octokit', '~> 4.0'
 gem 'protobuf'
 gem 'beefcake'
+gem 'cfoundry_client', git: 'https://github.com/ausdto/cfoundry_client'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

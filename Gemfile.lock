@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/ausdto/cfoundry_client
-  revision: 01a8851f407c2fc524429ca6a1a5284a01885d64
+  revision: 55138dd83dede7f5ef5a8984b51ef98dd7084a49
   specs:
     cfoundry_client (0.0.0)
       beefcake
@@ -91,7 +91,7 @@ GEM
       warden (~> 1.2.3)
     diff-lcs (1.2.5)
     docile (1.1.5)
-    domain_name (0.5.20160826)
+    domain_name (0.5.20161021)
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.1.1)
     dotenv-rails (2.1.1)
@@ -122,7 +122,7 @@ GEM
       tilt
     hashdiff (0.3.0)
     hashie (3.4.6)
-    http-cookie (1.0.2)
+    http-cookie (1.0.3)
       domain_name (~> 0.5)
     i18n (0.7.0)
     jbuilder (2.6.0)

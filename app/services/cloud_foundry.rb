@@ -28,6 +28,40 @@ class CloudFoundry
     app.dig(:metadata, :guid)
   end
 
+  def find_service_instance(service_name)
+    @client.service_instances(q: "name:#{service_name}").first_guid
+  end
+
+  def create_service(service_name, service_type, service_plan, app_name)
+    # create service if does not exist
+    service_instance_guid = find_service_instance(service_name)
+    if service_instance_guid.nil?
+      service_type_guid = @client.services(q: "label:#{service_type}").first_guid
+
+      #TODO find a particular service plan
+      service_plan_guid = @client.service_plans(q: "service_guid:#{service_type_guid}").first_guid
+
+      #TODO accepts_incomplete	Set to `true` if the client allows asynchronous provisioning. The cloud controller may respond before the service is ready for use.
+      service = @client.create_service_instance(service_name, service_plan_guid, @space_guid)
+
+      service_instance_guid = service[:metadata][:guid]
+      puts "created new service #{service_instance_guid}"
+    else
+      puts "found existing service #{service_instance_guid}"
+      #TODO update an service with envvars etc. http://apidocs.cloudfoundry.org/241/services/updating_an_service.html
+    end
+
+    app_guid = get_app_guid(app_name)
+    begin
+      @client.create_service_binding(service_instance_guid, app_guid)
+    rescue RestClient::ExceptionWithResponse => err
+      if not JSON.parse(err.response)["error_code"] == "CF-ServiceBindingAppServiceTaken"
+        raise
+      end
+    end
+  end
+
+
   ######################
   ### OLD STATIC WAY ###
   ######################

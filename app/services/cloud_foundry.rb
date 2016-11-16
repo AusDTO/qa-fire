@@ -9,6 +9,29 @@ require 'log_events/envelope.pb.rb'
 class CloudFoundry
   DEPLOY_STATUS_TIMEOUT = 15.minutes
 
+  def initialize
+    verify_ssl = !ENV['CF_API'].end_with?('local.pcfdev.io')
+    @client = CfoundryClient.new(ENV['CF_API'], verify_ssl: verify_ssl)
+    @client.login(ENV['CF_USERNAME'], ENV['CF_PASSWORD'])
+    @space_guid = @client.spaces(q: "name:#{ENV['CF_SPACE']}").first[:metadata][:guid]
+  end
+
+  def get_app_logs(app_name)
+    app_guid = get_app_guid(app_name)
+    return unless app_guid
+    @client.recent_logs(app_guid)
+  end
+
+  def get_app_guid(app_name)
+    app = @client.space_apps(@space_guid, q: "name:#{app_name}").first
+    return unless app
+    app.dig(:metadata, :guid)
+  end
+
+  ######################
+  ### OLD STATIC WAY ###
+  ######################
+
   def self.login
     # login
     cf_user = ENV['CF_USERNAME']

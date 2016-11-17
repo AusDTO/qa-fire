@@ -13,7 +13,7 @@ class CloudFoundry
     verify_ssl = !ENV['CF_API'].end_with?('local.pcfdev.io')
     @client = CfoundryClient.new(ENV['CF_API'], verify_ssl: verify_ssl)
     @client.login(ENV['CF_USERNAME'], ENV['CF_PASSWORD'])
-    @space_guid = @client.spaces(q: "name:#{ENV['CF_SPACE']}").first[:metadata][:guid]
+    @space_guid = @client.spaces(q: "name:#{ENV['CF_SPACE']}").first_guid
   end
 
   def get_app(app_name)
@@ -61,43 +61,10 @@ class CloudFoundry
     end
   end
 
-  # creates body for https://apidocs.cloudfoundry.org/246/apps/creating_an_app.html
-  def create_app_body(app_name, app_manifest)
-    #load values from manifest.yml including memory, buildpack and environment_json envvars
-    app = {name: app_name, space_guid: @space_guid}
-    if app_manifest['applications'][0]
-      app.merge!(app_manifest['applications'][0])
-      app['name'] = app_name
-    end
-    if app_manifest['env']
-      app['environment_json'] = app_manifest['env']
-    end
-    if app_manifest['qafire']
-      qa_fire_override(app, app_manifest, 'command')
-      qa_fire_override(app, app_manifest, 'instances')
-      qa_fire_override(app, app_manifest, 'buildpack')
-      qa_fire_override(app, app_manifest, 'memory')
-      qa_fire_override(app, app_manifest, 'disk_quota')
-      if %w(none process).include? app_manifest['qafire']['health_check_type']
-        app['health_check_type'] = 'none'
-      end
-      if app_manifest['qafire']['env'] # QA Fire specific env vars
-        if app['environment_json']
-          app['environment_json'].merge! app_manifest['qafire']['env']
-        else
-          app['environment_json'] = app_manifest['qafire']['env']
-        end
-      end
-    end
-    normalize_size(app, 'memory')
-    normalize_size(app, 'disk_quota')
-    app
-  end
-
   def push(app_name, app_manifest, app_zip)
     # create app if does not exist
     app_guid = get_app_guid(app_name)
-    body = create_app_body(app_name, app_manifest)
+    body = create_app_body(app_name, app_manifest, @space_guid)
     begin
       if app_guid.nil?
         new_app = @client.create_app(body)
@@ -200,19 +167,50 @@ class CloudFoundry
     @client.recent_logs(app_guid)
   end
 
-  private
+  # creates body for https://apidocs.cloudfoundry.org/246/apps/creating_an_app.html
+  def self.create_app_body(app_name, app_manifest, space_guid)
+    #load values from manifest.yml including memory, buildpack and environment_json envvars
+    app = {name: app_name, space_guid: space_guid}
+    if app_manifest['applications'][0]
+      app.merge!(app_manifest['applications'][0])
+      app['name'] = app_name
+    end
+    if app_manifest['env']
+      app['environment_json'] = app_manifest['env']
+    end
+    if app_manifest['qafire']
+      qa_fire_override(app, app_manifest, 'command')
+      qa_fire_override(app, app_manifest, 'instances')
+      qa_fire_override(app, app_manifest, 'buildpack')
+      qa_fire_override(app, app_manifest, 'memory')
+      qa_fire_override(app, app_manifest, 'disk_quota')
+      if %w(none process).include? app_manifest['qafire']['health_check_type']
+        app['health_check_type'] = 'none'
+      end
+      if app_manifest['qafire']['env'] # QA Fire specific env vars
+        if app['environment_json']
+          app['environment_json'].merge! app_manifest['qafire']['env']
+        else
+          app['environment_json'] = app_manifest['qafire']['env']
+        end
+      end
+    end
+    normalize_size(app, 'memory')
+    normalize_size(app, 'disk_quota')
+    app.symbolize_keys
+  end
 
-  def normalize_size(app, entry)
+  def self.normalize_size(app, entry)
     if app[entry]
       app[entry] = to_megabytes(app[entry])
     end
   end
 
-  def to_megabytes(i)
+  def self.to_megabytes(i)
     return (i =~ /\d+G/i) ? (i.to_i * 1024) : i.to_i
   end
 
-  def qa_fire_override(app, app_manifest, entry)
+  def self.qa_fire_override(app, app_manifest, entry)
     if app_manifest['qafire'][entry]
       app[entry] = app_manifest['qafire'][entry]
     end

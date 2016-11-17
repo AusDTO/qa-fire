@@ -1,14 +1,15 @@
 module SharedStubs
   def stub_cloud_foundry
+    cf = instance_double('CloudFoundry',
+                         create_service: true,
+                         push: true,
+                         start_app: true,
+                         stop_app: true,
+                         delete_app: true,
+                         delete_service: true,
+                         get_app_logs: [])
     class_double('CloudFoundry',
-                 login: true,
-                 create_service: true,
-                 push: true,
-                 start_app: true,
-                 stop_app: true,
-                 delete_app: true,
-                 delete_service: true,
-                 get_app_logs: []).as_stubbed_const
+                 new: cf).as_stubbed_const
   end
 
   def stub_github_collaborators(status=204)

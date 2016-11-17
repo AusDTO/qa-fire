@@ -27,36 +27,29 @@ class Server
 
       puts "Launching #{@deploy.full_name}"
 
-      if CloudFoundry.login
-        CloudFoundry.push(@deploy.full_name, app_manifest, app_zip)
+      cf = CloudFoundry.new
+      cf.push(@deploy.full_name, app_manifest, app_zip)
+      DeployEventService.new(@deploy).application_pushed!
 
-        DeployEventService.new(@deploy).application_pushed!
-        #set_envs
+      DatabaseService.new(app_manifest, @deploy).perform!
 
-        DatabaseService.new(app_manifest, @deploy).perform!
+      cf.start_app(@deploy.full_name)
+      deploy_success = cf.wait_for_deploy_status @deploy
 
-        CloudFoundry.start_app(@deploy.full_name)
-        deploy_success = CloudFoundry.wait_for_deploy_status @deploy
-
-        if @deploy.trigger == 'github'
-          puts 'Posting status to github'
-          GithubStatusService.new(@deploy, deploy_success).perform!
-        end
-
-        @deploy.update(deployed_at: DateTime.now)
-        puts 'Done'
+      if @deploy.trigger == 'github'
+        puts 'Posting status to github'
+        GithubStatusService.new(@deploy, deploy_success).perform!
       end
+
+      @deploy.update(deployed_at: DateTime.now)
+      puts 'Done'
     end
   end
 
-  def update!
-    CloudFoundry.login
-  end
-
   def destroy!
-    CloudFoundry.login
-    CloudFoundry.delete_app(@deploy.full_name)
-    CloudFoundry.delete_service(db_service_name)
+    cf = CloudFoundry.new
+    cf.delete_app(@deploy.full_name)
+    cf.delete_service(db_service_name)
   end
 
   #TODO: DRY

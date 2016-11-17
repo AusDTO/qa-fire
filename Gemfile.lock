@@ -1,6 +1,7 @@
 GIT
   remote: https://github.com/ausdto/cfoundry_client
-  revision: 55138dd83dede7f5ef5a8984b51ef98dd7084a49
+  revision: 6d6c990c95e4e2e00ec465b8c0a1c7f1d4aa0df7
+  branch: master
   specs:
     cfoundry_client (0.0.0)
       beefcake

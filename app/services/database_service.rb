@@ -11,47 +11,44 @@ class DatabaseService
     end
 
     cf = CloudFoundry.new
-    current_db_service = cf.find_service_instance(db_service_name)
+    current_db_service = cf.get_service_instance(db_service_name)
 
     #TODO handle multiple services
 
-    #TODO could refactor create_service so it works better with this service
-    cf.create_service(db_service_name,
-                      @app_manifest['qafire']['services'][0]['type'],
-                      @app_manifest['qafire']['services'][0]['plan'],
-                      @deploy.full_name)
-
-    DeployEventService.new(@deploy).service_created!
-
-    unless current_db_service
-      puts 'Skipping populating database - service already existed'
-      DeployEventService.new(@deploy).service_already_exists!
-      return
-    end
-
-    unless @app_manifest['qafire']['services'][0]['seed']
-      puts 'no seed information in manifest'
-      return
-    end
-
-    if @app_manifest['qafire']['services'][0]['seed']['s3']
-      bucket = @app_manifest['qafire']['services'][0]['seed']['s3']['bucket']
-      key = @app_manifest['qafire']['services'][0]['seed']['s3']['key']
-
-      unless bucket && key
-        puts 'Skipping seeding database - S3 bucket/key missing'
+    if current_db_service.nil?
+      cf.create_service(db_service_name,
+                        @app_manifest['qafire']['services'][0]['type'],
+                        @app_manifest['qafire']['services'][0]['plan'],
+                        @deploy.full_name)
+      DeployEventService.new(@deploy).service_created!
+      unless @app_manifest['qafire']['services'][0]['seed']
+        puts 'no seed information in manifest'
         return
       end
 
-      s3_client = Aws::S3::Client.new(:credentials => aws_creds)
-      Tempfile.open(['downloaded', '.sql']) do |file|
-        puts "Downloading '#{key}' from S3..."
-        s3_client.get_object(response_target: file.path, bucket: bucket, key: key)
-        restore(cf, file.path)
-        puts 'Restore from s3 complete'
+      if @app_manifest['qafire']['services'][0]['seed']['s3']
+        bucket = @app_manifest['qafire']['services'][0]['seed']['s3']['bucket']
+        key = @app_manifest['qafire']['services'][0]['seed']['s3']['key']
+
+        unless bucket && key
+          puts 'Skipping seeding database - S3 bucket/key missing'
+          return
+        end
+
+        s3_client = Aws::S3::Client.new(:credentials => aws_creds)
+        Tempfile.open(['downloaded', '.sql']) do |file|
+          puts "Downloading '#{key}' from S3..."
+          s3_client.get_object(response_target: file.path, bucket: bucket, key: key)
+          restore(cf, file.path)
+          puts 'Restore from s3 complete'
+        end
+      else
+        puts 'manifest did not contain seed location'
       end
     else
-      puts 'manifest did not contain seed location'
+      cf.bind_service(db_service_name, @deploy.full_name)
+      puts 'Skipping populating database - service already existed'
+      DeployEventService.new(@deploy).service_already_exists!
     end
   end
 

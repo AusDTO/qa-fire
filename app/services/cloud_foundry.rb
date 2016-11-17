@@ -1,11 +1,3 @@
-require 'log_events/uuid.pb.rb'
-require 'log_events/metric.pb.rb'
-require 'log_events/log.pb.rb'
-require 'log_events/http.pb.rb'
-require 'log_events/error.pb.rb'
-require 'log_events/envelope.pb.rb'
-
-
 class CloudFoundry
   DEPLOY_STATUS_TIMEOUT = 15.minutes
 
@@ -64,7 +56,7 @@ class CloudFoundry
   def push(app_name, app_manifest, app_zip)
     # create app if does not exist
     app_guid = get_app_guid(app_name)
-    body = create_app_body(app_name, app_manifest, @space_guid)
+    body = self.class.create_app_body(app_name, app_manifest, @space_guid)
     begin
       if app_guid.nil?
         new_app = @client.create_app(body)

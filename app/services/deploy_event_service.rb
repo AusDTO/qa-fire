@@ -48,6 +48,14 @@ class DeployEventService
     save_event("A service has been reused as it already existed")
   end
 
+  def unexpected_error!(error)
+    if error.is_a?(RestClient::ExceptionWithResponse)
+      save_event("#{error.class}: #{error}, Body: #{error.response}")
+    else
+      save_event("#{error.class}: #{error}")
+    end
+  end
+
   private
   def save_event(message)
     DeployEvent.create(

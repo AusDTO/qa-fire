@@ -1,3 +1,12 @@
+GIT
+  remote: https://github.com/ausdto/cfoundry_client
+  revision: 6d6c990c95e4e2e00ec465b8c0a1c7f1d4aa0df7
+  branch: master
+  specs:
+    cfoundry_client (0.0.0)
+      beefcake
+      rest-client
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -83,7 +92,7 @@ GEM
       warden (~> 1.2.3)
     diff-lcs (1.2.5)
     docile (1.1.5)
-    domain_name (0.5.20160826)
+    domain_name (0.5.20161021)
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.1.1)
     dotenv-rails (2.1.1)
@@ -114,7 +123,7 @@ GEM
       tilt
     hashdiff (0.3.0)
     hashie (3.4.6)
-    http-cookie (1.0.2)
+    http-cookie (1.0.3)
       domain_name (~> 0.5)
     i18n (0.7.0)
     jbuilder (2.6.0)
@@ -135,7 +144,6 @@ GEM
     mail (2.6.4)
       mime-types (>= 1.16, < 4)
     method_source (0.8.2)
-    middleware (0.1.0)
     mime-types (3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
@@ -171,11 +179,6 @@ GEM
     orm_adapter (0.5.0)
     pg (0.18.4)
     pkg-config (1.1.7)
-    protobuf (3.6.12)
-      activesupport (>= 3.2)
-      middleware
-      thor
-      thread_safe
     puma (3.6.0)
     rack (2.0.1)
     rack-protection (2.0.0.beta2)
@@ -327,10 +330,10 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk (~> 2.5.0)
-  beefcake
   byebug
   capybara
   cf-app-utils
+  cfoundry_client!
   coffee-rails (~> 4.2)
   devise
   dotenv-rails
@@ -347,7 +350,6 @@ DEPENDENCIES
   omniauth-github
   open4
   pg (~> 0.18)
-  protobuf
   puma (~> 3.0)
   rails (~> 5.0.0, >= 5.0.0.1)
   rails-controller-testing
@@ -376,4 +378,4 @@ RUBY VERSION
    ruby 2.3.1p112
 
 BUNDLED WITH
-   1.12.5
+   1.13.2

@@ -25,12 +25,13 @@ class Server
 
       app_manifest["env"] = @deploy.full_environment
 
+      cf = CloudFoundry.new
+
       if app_manifest['qafire'] && app_manifest['qafire']['self_deployed']
         puts "#{@deploy.full_name} is self deployed"
       else
         puts "Launching #{@deploy.full_name}"
 
-        cf = CloudFoundry.new
         cf.push(@deploy.full_name, app_manifest, app_zip)
         DeployEventService.new(@deploy).application_pushed!
 

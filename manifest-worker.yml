@@ -6,7 +6,7 @@ services:
   - 'qafire-db'
 applications:
 - name: qafire-sidekiq
-  buildpack: https://github.com/bjgordon/ruby-buildpack.git
+  buildpack: https://github.com/cloudfoundry/ruby-buildpack.git
   memory: 512M
   instances: 1
   path: .
